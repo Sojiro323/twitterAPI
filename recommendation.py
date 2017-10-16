@@ -7,77 +7,86 @@ import time
 import json
 import os
 import sys
+import random
+
 
 '''global variable'''
 parh = "./pickle/"
+start_score = 0.1
+path_pattern = ["0","1","2"]
+seeds = ["2294473200"]
+get_num = 10
 
 
 
-def recommendation(userID):
+def recommendation(pattern, seeds, seeds_score):
 
-    if os.path.exists(path + "path_score.pickle"): path_score = Mypickle.load(path,"path_score") #key : path_index
-    else: path_score = {0:0.33, 1:0.33, 2:0.33}#friends_sougo,friends-friends.,followers-followers
-    sorted(path_score.items(), key = lambda x:x[1])
+    match_list, match_seeds = follow_the_path(pattern, seeds)
+    match_list = ranking(pattern, match_list, match_seeds, seeds_score)
+    match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
+    seeds = seeds + match_users
 
-    show_user = []
-
-    for key , value in path_score.items():
-        predict_node = follow_the_path(userID, path_score, key)
-        show_user.append(predict_node)
-
-    show_user = node_sort(show_user, path_score)
-    discovered_seeds, p_check = personal_check(show_user)
-    path_score = update_score(path_score, p_check)
-    Mypickle.save('./pickle', path_score)
-
-    return discovered_seeds
+    return next_pattern, seeds, seeds_score
 
 
-def follow_the_path(userID, path_score, key):
+
+def follow_the_path(pattern, seeds):
 
     load_files = Mypickle.load(path, ['friends_dic','followers_dic'])
     friends_dic = load_files[0]
     followers_dic = load_files[1]
 
-    match = []
+    match_list = []
+    match_seeds = {}
 
     if key is 0:
-        friends = MytwitterAPI.get_node(userID, friends_dic)
-        followers = MytwitterAPI.get_node(userID, followers_dic)
-        match = list(set(friends) & set(followers))
+
     elif key is 1:
-        friends = MytwitterAPI.get_node(userID,friends_dic)
-        for friend in friends:
-            match = match + MytwitterAPI.get_node(friend,friends_dic)
-            #match = list(set(match))
+
     elif key is 2:
-        followers = MytwitterAPI.get_node(userID,followers_dic)
-        for follower in followers:
-            match = match + MytwitterAPI.get_node(follower,followers_dic)
-            #match = list(set(match))
+
     else:
         print("key is not exist")
 
-    return match
+    return match_list, match_seeds
 
 
-def node_sort(show_user, path_score):
+def ranking(pattern, match_list, match_seeds, seeds_score):
 
-    return show_user
-
-
-
-def personal_check(show_user):
-
-    discovered_seeds = []
-    p_check = []
-
-    return discovered_seeds, p_check
+    return match_list
 
 
-def updata_score(path_score, p_check):
 
-    return path_score
+def personal_check(pattern, match_list, match_seeds ,seeds_score):
+    match_users = []
+
+    for
+        seeds = match_seeds[user]
+            if#合っていたら
+            seeds_score = update_score(True, pattern, seeds, seeds_score)
+            seeds_score = init_score(user, seeds_score)
+            match_users.append(user)
+            else:#外したら
+            seeds_score = update_score(False, pattern, seeds, seeds_score)
+
+        continue_flag, next_pattern = check_continue(pattern, seeds_score)
+        if continue_flag: return match_users, next_pattern, seeds_score
+
+    return match_users, next_pattern, seeds_score
+
+def init_score(user, seeds_score):
+
+    return seeds_score
+
+
+def updata_score(flag, pattern, match_seeds, seeds_score):
+
+    return seeds_score
+
+
+def passcheck_continue(pattern, seeds_score):
+
+    return  continue_flag, next_pattern
 
 def visualize(answer_list):
 
@@ -87,15 +96,18 @@ def visualize(answer_list):
 ### Execute
 if __name__ == "__main__":
 
-    seeds = ["2294473200"]
-    get_num = 10
+    seeds_list = seeds
+    start_num = len(seeds_list)
 
-    answer_list = []
+    seeds_score = {}
 
-    while(len(answer_list) < get_num):
-        userID = seeds.pop(0)
-        discovered_seeds = recommendation(userID)
-        answer_list = answer_list + discovered_seeds
-        seeds = seeds + discovered_seeds
+    for seed in seeds_list:
+      seed_score = {p:[start_score,0,0] for p in path_pattern}  #[precision, good, bad]
+      seeds_score[seed] = seed_score
 
-    visualize(answer_list)
+    next_pattern = random.choice(path_pattern)
+
+    while(len(seeds_list) < get_num + start_num):
+        next_pattern, seeds_list, seeds_score = recommendation(next_pattern, seeds_list, seeds_score)
+
+    visualize(seeds_list[start_num:])
