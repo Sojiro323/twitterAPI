@@ -28,7 +28,7 @@ max_hop = 3
 
 ### Functions
 def main():
-    limit = [0,0,900] #friends,followers,user_show
+    limit = [15,15,900] #friends,followers,user_show
 
     #check init or restart
     if os.path.exists("./pickle/friends_pop.pickle"):
@@ -41,7 +41,7 @@ def main():
 
     while(len(friends_pop) > 0 or len(followers_pop) > 0):
 
-        if limit.count(0) == 2:
+        if (limit.count(0) == 2) or ((len(friends_pop) == 0) and (limit[1] == 0)) or ((len(followers_pop) == 0) and (limit[0] == 0)):
             limit = save_pickle(friends_pop, friends_doneID, friends_dic, followers_pop, followers_doneID, followers_dic, check_list)
 
 
