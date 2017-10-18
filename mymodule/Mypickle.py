@@ -11,7 +11,7 @@ def load(path, files):
     #name = path + names.get(id(file)) + ".pickle"
 
     if isinstance(files, str):
-        name = path + f + ".pickle"
+        name = path + files + ".pickle"
         if not os.path.exists(name):
             print('not found directry or file:{0}'.format(name))
             sys.exit()

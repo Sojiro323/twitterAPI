@@ -21,6 +21,20 @@ def create_oath_session(oath_key_dict):
 
     return oath
 
+def show(user_ID):
+
+    url = "https://api.twitter.com/1.1/users/show.json?"
+    params = {
+        "user_id": user_ID
+        }
+    oath = create_oath_session(oath_key_dict)
+    try:
+        responce = oath.get(url, params = params)
+    except ConnectionError as e:
+        return show(user_ID)
+    return responce
+
+
 def lookup(users_ID):
     url = "https://api.twitter.com/1.1/users/lookup.json?"
     params = {
