@@ -3,6 +3,7 @@
 from mymodule import Mail
 from mymodule import MytwitterAPI
 from mymodule import Mypickle
+from mymodule import Mypath
 import time
 import json
 import os
@@ -10,29 +11,27 @@ import sys
 import random
 import itertools
 from operator import itemgetter
-from selenium import webdriver 
+from selenium import webdriver
 #import webbrowser
 
 
 '''global variable'''
 path = "./pickle/"
 start_score = 0.1
-path_pattern = ["0","1","2"]
+path_pattern = ["1","2","3","4","5","6","mutual"]
+#derive_pattern = {}
 seeds = ["2294473200"]
 get_num = 10
 
-load_files = Mypickle.load(path, ['friends_dic','followers_dic'])
-friends_dic = load_files[0]
-followers_dic = load_files[1]
 
 def recommendation(pattern, seeds, seeds_score):
 
   print("pattern:{0} recommendation start!!".format(pattern))
-  match_list, match_seeds = follow_the_path(pattern, seeds)
+  match_list, match_seeds = MyPath.get_match(pattern, seeds)
   print('match_list_lengh is {0}'.format(len(match_list)))
-  
-  
-  if len(match_list) == 0: next_pattern = random.choice(path_pattern)  
+
+
+  if len(match_list) == 0: next_pattern = random.choice(path_pattern)
   else:
     match_list = ranking(pattern, match_list, match_seeds, seeds_score)
     match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
@@ -41,65 +40,14 @@ def recommendation(pattern, seeds, seeds_score):
   return next_pattern, seeds, seeds_score
 
 
-
-def follow_the_path(pattern, seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  if pattern is path_pattern[0]:
-
-    for seed in seeds:
-      if seed not in friends_dic or seed not in followers_dic: continue
-      friends = friends_dic[seed]
-      followers = followers_dic[seed]
-      temp = list(set(friends) & set(followers))
-      match_list = list(set(match_list) | set(temp))
-      for match in match_list:
-        if match not in match_seeds: match_seeds[match] = [seed]
-        else: match_seeds[match] = match_seeds[match].append(seed)
-    
-  elif pattern is path_pattern[1]:
-
-    for seed in seeds:
-      if seed not in friends_dic: continue
-      friends = friends_dic[seed]
-      for friend in friends:
-        if friend not in friends_dic: continue
-        temp = friends_dic[friend] 
-        match_list = list(set(match_list) & set(temp))
-        for match in match_list:
-          if match not in match_seeds: match_seeds[match] = [seed]
-          else: match_seeds[match] = match_seeds[match].append(seed)
-              
-     
-  elif pattern is path_pattern[2]:
-
-    for seed in seeds:
-      if seed not in followers_dic: continue
-      followers = followers_dic[seed]
-      for follower in followers:
-        if follower not in followers_dic: continue
-        temp = followers_dic[follower] 
-        match_list = list(set(match_list) & set(temp))
-        for match in match_list:
-          if match not in match_seeds: match_seeds[match] = [seed]
-          else: match_seeds[match] = match_seeds[match].append(seed)
- 
-  else:
-    print("key is not exist")
-
-  return match_list, match_seeds
-
-
 def ranking(pattern, match_list, match_seeds, seeds_score):
-    
+
   seeds = seeds_score.keys()
   path_score = {}
   ranking_list = []
 
   for k,v in seeds_score.items():
-    path_score[k] = v[pattern][0]        
+    path_score[k] = v[pattern][0]
 
   for t in range(len(seeds), 0, -1):
     combinations = []
@@ -117,19 +65,19 @@ def ranking(pattern, match_list, match_seeds, seeds_score):
         if len(set(c).symmetric_difference(match_seeds[match])) == 0:
           ranking_list.append(match)
           match_list.remove(match)
-  
+
   return ranking_list
 
 
 
 def personal_check(pattern, match_list, match_seeds ,seeds_score):
-  
+
   if os.path.exists(path + "y_n.pickle"): y_n = Mypickle.load(path,'y_n')
   else:y_n = {}
   match_users = []
 
   for user in match_list:
-    
+
     if user in y_n: continue
 
     responce = MytwitterAPI.show(user)
@@ -137,24 +85,24 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
       print("Error code: %d" %(responce.status_code))
       sys.exit()
 
-    ress = json.loads(responce.text) 
+    ress = json.loads(responce.text)
     print("\nuserID:{0}\nusername:{1}\nprofile:{2}\n".format(user,ress["name"],ress["description"]))
-    
+
     webbrowser_flag = False
     while(1):
       print("input y or n (help = h)")
       input_flag = input('>>>  ')
-      
+
       if input_flag == "h":
         driver = webdriver.Chrome("../chromedriver")
         driver.get("https://twitter.com/intent/user?user_id=" + user)
         webbrowser_flag = True
-      
-      elif input_flag == "y" or input_flag == "n": 
+
+      elif input_flag == "y" or input_flag == "n":
         y_n[user] = input_flag
         if webbrowser_flag: driver.close()
         break
-      
+
       else: print("input again!!")
 
     seeds = match_seeds[user]
@@ -183,7 +131,7 @@ def init_score(user, seeds_score):
       else: user_score[path_k][0] += path_v[0]*1.0/count
 
   seeds_score[user] = user_score
-    
+
   return seeds_score
 
 
@@ -203,7 +151,7 @@ def passcheck_continue(pattern, seeds_score):
   for seed_k, seed_v in seeds_score.items():
     for path_k, path_v in seed_v.items():
       if path_k not in score_list: score_list[path_k] = path_v[0]
-      else: 
+      else:
         score_list[path_k] += path_v[0]
 
   next_pattern = max(score_list.items(), key=itemgetter(1))[0]
@@ -230,7 +178,7 @@ if __name__ == "__main__":
     seed_score = {p:[start_score,0,0] for p in path_pattern}  #[precision, good, bad]
     seeds_score[seed] = seed_score
 
-  next_pattern = random.choice(path_pattern)
+  next_pattern = random.choice(path_pattern[0:6])
 
   while(len(seeds_list) < get_num + start_num):
       next_pattern, seeds_list, seeds_score = recommendation(next_pattern, seeds_list, seeds_score)
