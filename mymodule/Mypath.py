@@ -74,7 +74,7 @@ def get_match():
         match_list = list(set(match_list) & set(temp))
         match_seeds = match(seed, match_list, match_seeds)
 
-  if pattern is path_pattern[6]:#mutual
+  elif pattern is path_pattern[6]:#mutual
 
     for seed in seeds:
       if seed not in friends_dic or seed not in followers_dic: continue
