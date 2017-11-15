@@ -22,6 +22,7 @@ import sys
 '''global'''
 seeds = ["2294473200"]
 max_hop = 3
+path = "./pickle/"
 '''end global'''
 
 
@@ -31,7 +32,7 @@ def main():
     limit = [15,15,900] #friends,followers,user_show
 
     #check init or restart
-    if os.path.exists("./pickle/friends_pop.pickle"):
+    if os.path.exists(path + "friends_pop.pickle"):
         friends_pop, friends_doneID, friends_dic, followers_pop, followers_doneID, followers_dic, check_list = load_pickle()
     else:
         friends_pop, followers_pop, friends_doneID, followers_doneID, check_list = init()
@@ -68,7 +69,6 @@ def main():
 
 def load_pickle():
 
-    path = "./pickle/"
     files = ['friends_pop', 'friends_doneID', 'friends_dic', 'followers_pop', 'followers_doneID', 'followers_dic', 'check_list']
     load_files = Mypickle.load(path,files)
 
@@ -77,7 +77,6 @@ def load_pickle():
 
 def save_pickle(friends_pop, friends_doneID, friends_dic, followers_pop, followers_doneID, followers_dic, check_list):
 
-    path = "./pickle/"
     start = int(time.time())
     Mypickle.save(path,friends_pop, friends_doneID, friends_dic, followers_pop, followers_doneID, followers_dic, check_list)
     end = int(time.time())
