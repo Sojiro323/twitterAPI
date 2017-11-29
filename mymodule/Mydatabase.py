@@ -38,8 +38,8 @@ def insert(database, values):
 
     # レコードの登録
     if database == "follow_graph": sql = 'insert ignore into follow_graph values (%s, %s)'
-    else: sql = 'insert ignore into checked_list values (%s, %s, %s)'
-    if type(values) == 'tuple': c.execute(sql, values)  # 1件のみ
+    else: sql = 'insert ignore into checked_list values (%s, %s, %s, %s, %s)'
+    if isinstance(values,tuple): c.execute(sql, values)  # 1件のみ
     else: c.executemany(sql, values)    # 複数件
     print('\n* complete : insert\n')
 
