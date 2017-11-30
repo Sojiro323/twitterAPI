@@ -7,7 +7,7 @@ from mymodule import Mydatabase
 import json
 import os
 import sys
-
+import time
 
 path = "./pickle/"
 
@@ -50,13 +50,15 @@ for i, users in enumerate(user_list):
         sys.exit()
 
     limit = int(responce.headers['x-rate-limit-remaining']) if 'x-rate-limit-remaining' in responce.headers else 0
-    if limit == 0:time.sleep(900)
+    if limit == 0:
+        print("start sleep")
+        time.sleep(900)
 
     ress = json.loads(responce.text)
     for res in ress:
         state = check_status(res["id_str"], res["protected"])
         Mydatabase.insert("checked_list", (res["id_str"], state, res["lang"], res["friends_count"], res["followers_count"]))
 
-    if i+1 < len(users_list):
+    if i+1 < len(user_list):
         users_list = user_list[i+1:]
         Mypickle.save(path, users_list)
