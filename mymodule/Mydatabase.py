@@ -28,17 +28,40 @@ for row in c.fetchall():
     print('Id:', row[0], 'Content:', row[1])
 '''
 
+DBNAME = 'twitterDB'
+
+
+def check(userID):
+
+    conn = MySQLdb.connect(user="root",host="localhost",password="23622059",db=DBNAME) 
+    c = conn.cursor()
+    sql = "select state from checked_list where userID = " + userID
+    c.execute(sql)
+    result = c.fetchall()
+    if len(result) == 0: result = '***'
+    return result
+
+
+def select(sql):
+    
+    conn = MySQLdb.connect(user="root",host="localhost",password="23622059",db=DBNAME) 
+    c = conn.cursor()
+    c.execute(sql)
+    result = c.fetchall()
+    
+    return result
+
 
 
 
 def insert(database, values):
-    DBNAME = 'twitterDB'
     conn = MySQLdb.connect(user="root",host="localhost",password="23622059",db=DBNAME)
     c = conn.cursor()
 
     # レコードの登録
     if database == "follow_graph": sql = 'insert ignore into follow_graph values (%s, %s)'
-    else: sql = 'insert ignore into checked_list values (%s, %s, %s, %s, %s)'
+    elif database == 'checked_list': sql = 'insert ignore into checked_list values (%s, %s, %s, %s, %s)'
+    else: sql = 'insert ignore into result values (%s, %s, %s)'
     if isinstance(values,tuple): c.execute(sql, values)  # 1件のみ
     else: c.executemany(sql, values)    # 複数件
     print('\n* complete : insert\n')
