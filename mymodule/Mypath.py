@@ -26,7 +26,7 @@ def get_match(pattern, seeds):
       elif flag == "friends_only" or flag == "all":
         print('flag==friends_only or all')
         friends = Mydatabase.select("select followerID from follow_graph where userID = \'" + seed + "\'")
-        friends = friends[:,0]
+        friends = tuple2list(friends)
       else: continue
 
       print(friends)
@@ -179,8 +179,8 @@ def acsessAPI(userID, api):
     return_list = []
 
     tmp = Mydatabase.select('select limited, last_use from api_limit where api_name = \'' + api + '\'')
-    limit = tmp[0]
-    last_use = tmp[1]
+    limit = tmp[0][0]
+    last_use = tmp[0][1]
     last_time = datetime.datetime(int(last_use[0:4]),int(last_use[5:7]),int(last_use[8:10]),int(last_use[11:13]),int(last_use[14:16]),int(last_use[17:19]))
 
     now = time.strftime('%Y-%m-%d %H:%M:%S')
@@ -214,3 +214,12 @@ def acsessAPI(userID, api):
         return_list.append(ID)
 
     return return_list
+
+
+def tuple2list(tp):
+  ans = []
+  for t in tp:
+    if ans.append(t[0])
+  return ans
+
+
