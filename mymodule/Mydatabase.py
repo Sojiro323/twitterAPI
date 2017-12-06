@@ -51,6 +51,18 @@ def select(sql):
     
     return result
 
+def update(database, values):
+    conn = MySQLdb.connect(user="root",host="localhost",password="23622059",db=DBNAME)
+    c = conn.cursor()
+
+    # レコードの更新
+
+    if database == 'checked_list':
+      c.execute('INSERT INTO checked_list (userID, state) VALUES (%s,%s) ON DUPLICATE KEY UPDATE userID=%s',values)
+    elif database == 'api_limit':
+      c.execute('INSERT INTO api_limit (api_name, limited, last_use) VALUES (%s,%s,%s) ON DUPLICATE KEY UPDATE api_name=%s',values)
+    # データベースへの変更を保存
+    conn.commit()
 
 
 

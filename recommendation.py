@@ -18,7 +18,8 @@ from selenium import webdriver
 '''global variable'''
 path = "./pickle/"
 start_score = 0.1
-path_pattern = ["1","2","3","4","5","6","mutual"]
+path_pattern = ["1", "2"]
+#path_pattern = ["1","2","3","4","5","6","mutual"]
 #derive_pattern = {}
 seeds = ["2294473200"]
 get_num = 10
@@ -178,7 +179,8 @@ if __name__ == "__main__":
     seed_score = {p:[start_score,0,0] for p in path_pattern}  #[precision, good, bad]
     seeds_score[seed] = seed_score
 
-  next_pattern = random.choice(path_pattern[0:6])
+  #next_pattern = random.choice(path_pattern[0:6])
+  next_pattern = random.choice(path_pattern)
 
   while(len(seeds_list) < get_num + start_num):
       next_pattern, seeds_list, seeds_score = recommendation(next_pattern, seeds_list, seeds_score)
