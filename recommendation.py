@@ -108,6 +108,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
       if input_flag == "y" or input_flag == "n":
         y_n[user] = input_flag
+        break
 
       else: print("input again!!")
 
