@@ -38,8 +38,8 @@ def check(userID):
     sql = "select state from checked_list where userID = " + userID
     c.execute(sql)
     result = c.fetchall()
-    if len(result) == 0: result = '***'
-    return result
+    if len(result) == 0: return '***'
+    return result[0]
 
 
 def select(sql):

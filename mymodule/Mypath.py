@@ -17,7 +17,6 @@ def get_match(pattern, seeds):
 
   if pattern is path_pattern[0]:#friend
 
-    print('if ok!!')
     for seed in seeds:
       flag = Mydatabase.check(seed)
       print(flag)
