@@ -88,10 +88,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
     ress = json.loads(responce.text)
     #print("\nuserID:{0}\nusername:{1}\nprofile:{2}\n".format(user,ress["name"],ress["description"]))
-    print(user)
-    print(ress["name"])
-    print(ress["description"])
-
+    print("userID:{0}".format(user))
 
     webbrowser_flag = False
     while(1):
