@@ -26,13 +26,14 @@ def get_match(pattern, seeds):
       elif flag == "friends_only" or flag == "all":
         print('flag==friends_only or all')
         friends = Mydatabase.select("select followerID from follow_graph where userID = \'" + seed + "\'")
+        friends = friends[:,0]
       else: continue
 
       print(friends)
       match_list = list(set(match_list) & set(friends))
       match_seeds = match(seed, friends, match_seeds)
       print(len(match_list), len(match_seeds))
-      print(finish)
+      print("finish")
 
   elif pattern is path_pattern[1]:#follower
   
