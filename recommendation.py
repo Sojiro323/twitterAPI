@@ -86,10 +86,11 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
       print("Error code: %d" %(responce.status_code))
       sys.exit()
 
-    ress = json.loads(responce.text)
-    print(user)
-    print("username:{0}\nprofile:{1}\n".format(ress["name"],ress["description"]))
+    ress = json.loads(responce.text)i
     #print("\nuserID:{0}\nusername:{1}\nprofile:{2}\n".format(user,ress["name"],ress["description"]))
+    print(user)
+    print(ress["name"])
+    print(ress["description"])
 
 
     webbrowser_flag = False
