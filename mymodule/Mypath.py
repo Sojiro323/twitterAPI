@@ -219,7 +219,7 @@ def acsessAPI(userID, api):
 def tuple2list(tp):
   ans = []
   for t in tp:
-    if ans.append(t[0])
+    ans.append(t[0])
   return ans
 
 
