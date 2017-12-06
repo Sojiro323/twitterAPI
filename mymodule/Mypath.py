@@ -37,7 +37,7 @@ def get_match():
         followers = update(flag, 'followers_only', seed)
       elif flag == "followers_only" or flag == "all":
         followers = Mydatabase.select("select userID from follow_graph where userID = \'" + seed + "\'")
-     else: continue 
+      else: continue 
       
       print(followers)
       match_list = list(set(match_list) & set(followers))
