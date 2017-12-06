@@ -18,7 +18,7 @@ from selenium import webdriver
 '''global variable'''
 path = "./pickle/"
 start_score = 0.1
-path_pattern = ["1", "2"]
+path_pattern = ["1"]
 #path_pattern = ["1","2","3","4","5","6","mutual"]
 #derive_pattern = {}
 seeds = ["2294473200"]
@@ -95,7 +95,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
       input_flag = input('>>>  ')
 
       if input_flag == "h":
-        driver = webdriver.Chrome("../chromedriver")
+        driver = webdriver.Chrome("./chromedriver")
         driver.get("https://twitter.com/intent/user?user_id=" + user)
         webbrowser_flag = True
 

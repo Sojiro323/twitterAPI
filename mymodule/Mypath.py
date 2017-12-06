@@ -30,7 +30,7 @@ def get_match(pattern, seeds):
       match_seeds = match(seed, friends, match_seeds)
 
   elif pattern is path_pattern[1]:#follower
-
+  
     for seed in seeds:
       flag = Mydatabase.check(seed)
       if flag == "***" or flag == "friends_only":
