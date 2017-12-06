@@ -9,7 +9,7 @@ import datetime
 path_pattern = ["1","2"]
 
 
-def get_match():
+def get_match(pattern, seeds):
 
 
   match_list = []
@@ -37,13 +37,21 @@ def get_match():
         followers = update(flag, 'followers_only', seed)
       elif flag == "followers_only" or flag == "all":
         followers = Mydatabase.select("select userID from follow_graph where userID = \'" + seed + "\'")
-      else: continue 
-      
+      else: continue
+
       print(followers)
       match_list = list(set(match_list) & set(followers))
       match_seeds = match(seed, followers, match_seeds)
 
- """ elif pattern is path_pattern[2]:#com_friend
+
+  else:
+    print("key_error")
+
+
+  return match_list, match_seeds
+
+'''
+  elif pattern is path_pattern[2]:#com_friend
 
     for seed in seeds:
       if seed not in friends_dic: continue
@@ -98,12 +106,8 @@ def get_match():
       temp = list(set(friends) & set(followers))
       match_list = list(set(match_list) | set(temp))
       match_seeds = match(seed, match_list, match_seeds)
-"""
+'''
 
-  else:
-    print("key is not exist")
-
-  return match_list, match_seeds
 
 
 def match(seed, match_list, match_seeds):
@@ -115,7 +119,7 @@ def match(seed, match_list, match_seeds):
   return match_seeds
 
 def update(flag, goal, userID):
-  
+
   friends = []
   followers = []
 
@@ -128,14 +132,14 @@ def update(flag, goal, userID):
       followers = Mydatabase.select('select userID from follow_graph where followerID = \'' + userID + '\'')
     elif flag == 'friends_only':
       followers == use_API(userID, 'followers')
-      friends = Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')    
- 
+      friends = Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
+
     Mydatabase.update(checked_list, (userID, 'all', userID))
     return friends, followers
 
   elif goal == 'friends_only':
     friends = use_API(userID, 'friends')
-    if flag == 'followers_only': Mydatabase.update('checked_list', (userID, 'all', userID)
+    if flag == 'followers_only': Mydatabase.update('checked_list', (userID, 'all', userID))
     else: Mydatabase.update('checked_list', (userID, 'friends_only', userID))
 
     return friends
@@ -144,7 +148,6 @@ def update(flag, goal, userID):
     followers = use_API(userID, 'followers')
     if flag == 'friends_only': Mydatabase.update('checked_list', (userID, 'all', userID))
     else: Mydatabase.update('checked_list', (userID, 'followers_only', userID))
-
 
     return followers
 
@@ -173,7 +176,7 @@ def acsessAPI(userID, api):
     limit = tmp[0]
     last_use = tmp[1]
     last_time = datetime.datetime(int(last_use[0:4]),int(last_use[5:7]),int(last_use[8:10]),int(last_use[11:13]),int(last_use[14:16]),int(last_use[17:19]))
-    
+
     now = time.strftime('%Y-%m-%d %H:%M:%S')
     now_time = datetime.datetime(int(now[0:4]),int(now[5:7]),int(now[8:10]),int(now[11:13]),int(now[14:16]),int(now[17:19]))
     delta = now_time - last_time
@@ -183,19 +186,19 @@ def acsessAPI(userID, api):
       while(delta.total_seconds() < 900):
         now_time = datetime.datetime(int(now[0:4]),int(now[5:7]),int(now[8:10]),int(now[11:13]),int(now[14:16]),int(now[17:19]))
         delta = now_time - last_time
-    
+
     if api == "followers":responce = MytwitterAPI.followers(userID)
     else:responce = MytwitterAPI.friends(userID)
 
 
     limit = int(responce.headers['x-rate-limit-remaining']) if 'x-rate-limit-remaining' in responce.headers else 0
     Mydatabase.update('api_limit', (api, limit, now, api))
-   
+
     if responce.status_code != 200:
       print("Error code: %d" %(responce.status_code))
       if responce.status_code == 401:
         Mydatabase.update('checked_list', (userID, 'protected', userID))
-      elif responce.status_code == 404: 
+      elif responce.status_code == 404:
         Mydatabase.update('checked_list', (userID, 'NotFound', userID))
 
 

@@ -28,7 +28,7 @@ get_num = 10
 def recommendation(pattern, seeds, seeds_score):
 
   print("pattern:{0} recommendation start!!".format(pattern))
-  match_list, match_seeds = MyPath.get_match(pattern, seeds)
+  match_list, match_seeds = Mypath.get_match(pattern, seeds)
   print('match_list_lengh is {0}'.format(len(match_list)))
 
 
