@@ -28,10 +28,10 @@ def get_match(pattern, seeds):
         friends = Mydatabase.select("select followerID from follow_graph where userID = \'" + seed + "\'")
       else: continue
 
-      print(len(friends))
+      print(friends)
       match_list = list(set(match_list) & set(friends))
       match_seeds = match(seed, friends, match_seeds)
-      print(len(match_list,match_seeds))
+      print(len(match_list), len(match_seeds))
       print(finish)
 
   elif pattern is path_pattern[1]:#follower
