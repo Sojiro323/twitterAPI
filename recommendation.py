@@ -87,13 +87,17 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
       sys.exit()
 
     ress = json.loads(responce.text)
-    print("\nuserID:{0}\nusername:{1}\nprofile:{2}\n".format(user,ress["name"],ress["description"]))
+    print(user)
+    print("username:{1}\nprofile:{2}\n".format(ress["name"],ress["description"]))
+    #print("\nuserID:{0}\nusername:{1}\nprofile:{2}\n".format(user,ress["name"],ress["description"]))
+
 
     webbrowser_flag = False
     while(1):
       print("input y or n (help = h)")
       input_flag = input('>>>  ')
 
+'''
       if input_flag == "h":
         driver = webdriver.Chrome("./chromedriver")
         driver.get("https://twitter.com/intent/user?user_id=" + user)
@@ -103,8 +107,13 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
         y_n[user] = input_flag
         if webbrowser_flag: driver.close()
         break
+'''
+      if input_flag == "y" or input_flag == "n":
+        y_n[user] = input_flag
 
       else: print("input again!!")
+
+
 
     seeds = match_seeds[user]
     if input_flag == "y":
