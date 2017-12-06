@@ -39,7 +39,7 @@ def check(userID):
     c.execute(sql)
     result = c.fetchall()
     if len(result) == 0: return '***'
-    return result[0]
+    return result[0][0]
 
 
 def select(sql):
