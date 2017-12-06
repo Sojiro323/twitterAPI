@@ -88,7 +88,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
     ress = json.loads(responce.text)
     print(user)
-    print("username:{1}\nprofile:{2}\n".format(ress["name"],ress["description"]))
+    print("username:{0}\nprofile:{1}\n".format(ress["name"],ress["description"]))
     #print("\nuserID:{0}\nusername:{1}\nprofile:{2}\n".format(user,ress["name"],ress["description"]))
 
 
