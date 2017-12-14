@@ -35,7 +35,7 @@ def get_match(pattern, seeds):
     match_list = list(set(list1) & set(list2))
     match_seeds = join_dic([seeds1, seeds2])
 
-  elif pattern is path_pattern[7]:#3_3a  
+  '''elif pattern is path_pattern[7]:#3_3a  
   elif pattern is path_pattern[8]:#3_3b
   elif pattern is path_pattern[9]:#3_35
   elif pattern is path_pattern[10]:#3_36
@@ -66,7 +66,7 @@ def get_match(pattern, seeds):
   elif pattern is path_pattern[35]:#5_1246
   elif pattern is path_pattern[36]:#5_13456
   elif pattern is path_pattern[37]:#5_23456
-  elif pattern is path_pattern[38]:#all
+  elif pattern is path_pattern[38]:#all'''
   else:
     print("key_error")
 
