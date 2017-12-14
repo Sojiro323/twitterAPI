@@ -82,7 +82,7 @@ def match(seed, match_list, match_seeds):
     return match_seeds
 
   for match in match_list:
-    if match not in match_seeds: matchseeds[match] = [seed]
+    if match not in match_seeds: match_seeds[match] = [seed]
     else: match_seeds[match] = match_seeds[match].append(seed)
 
   return match_seeds
@@ -294,7 +294,6 @@ def basic_pass5(seeds):
 
   for seed in seeds:
     flag = Mydatabase.check(seed)
-    print(flag)
     if flag == "***" or flag == "followers_only":
       friends = update(flag, 'friends_only', seed)
     elif flag == "friends_only" or flag == "all":
