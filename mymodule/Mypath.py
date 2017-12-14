@@ -78,8 +78,11 @@ def get_match(pattern, seeds):
 
 def match(seed, match_list, match_seeds):
 
+  if len(match_list) == 0:
+    return match_seeds
+
   for match in match_list:
-    if match not in match_seeds: match_seeds[match] = [seed]
+    if match not in match_seeds: matchseeds[match] = [seed]
     else: match_seeds[match] = match_seeds[match].append(seed)
 
   return match_seeds
