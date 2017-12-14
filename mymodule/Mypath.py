@@ -230,7 +230,7 @@ def basic_pass3(seeds):
   match_seeds = {}
 
   for seed in seeds:
-    flag = Mydatavase.check(seed)
+    flag = Mydatabase.check(seed)
     if flag == "***" or flag == "followers_only":
       friends = update(flag, 'friends_only', seed)
     elif flag == "friends_only" or flag == "all":
@@ -238,17 +238,17 @@ def basic_pass3(seeds):
       friends = tuple2list(friends)
     else: continue
 
-  for friend in friends:
-    flag = Mydatabase.check(friend)
-    if flag == "***" or flag == "friends_only":
-      followers = update(flag, 'followers_only', friend)
-    elif flag == "followers_only" or flag == "all":
-      followers = Mydatabase.select("select userID from follow_graph where userID = \'" + friend + "\'")
-      followers = tuple2list(followers)
-    else: continue
+    for friend in friends:
+      flag = Mydatabase.check(friend)
+      if flag == "***" or flag == "friends_only":
+        followers = update(flag, 'followers_only', friend)
+      elif flag == "followers_only" or flag == "all":
+        followers = Mydatabase.select("select userID from follow_graph where userID = \'" + friend + "\'")
+        followers = tuple2list(followers)
+      else: continue
 
-    match_list = list(sert(match_list) | set(followers))
-    match_seeds = match(seed, followers, match_seeds)
+      match_list = list(sert(match_list) | set(followers))
+      match_seeds = match(seed, followers, match_seeds)
 
   return match_list, match_seeds
 
@@ -259,7 +259,7 @@ def basic_pass4(seeds):
   match_list = []
   match_seeds = {}
 
-   for seed in seeds:
+  for seed in seeds:
     flag = Mydatabase.check(seed)
     if flag == "***" or flag == "friends_only":
       followers = update(flag, 'followers_only', seed)
@@ -268,18 +268,17 @@ def basic_pass4(seeds):
       followers = tuple2list(followers)
     else: continue
 
-   for follower in followers:
-    flag = Mydatabase.check(follower)
-    print(flag)
-    if flag == "***" or flag == "followers_only":
-      friends = update(flag, 'friends_only', follower)
-    elif flag == "friends_only" or flag == "all":
-      friends = Mydatabase.select("select followerID from follow_graph where userID = \'" + follower + "\'")
-      friends = tuple2list(friends)
-    else: continue
+    for follower in followers:
+      flag = Mydatabase.check(follower)
+      if flag == "***" or flag == "followers_only":
+        friends = update(flag, 'friends_only', follower)
+      elif flag == "friends_only" or flag == "all":
+        friends = Mydatabase.select("select followerID from follow_graph where userID = \'" + follower + "\'")
+        friends = tuple2list(friends)
+      else: continue
 
-    match_list = list(set(match_list) | set(friends))
-    match_seeds = match(seed, friends, match_seeds)
+      match_list = list(set(match_list) | set(friends))
+      match_seeds = match(seed, friends, match_seeds)
 
   return match_list, match_seeds
 
@@ -300,20 +299,17 @@ def basic_pass5(seeds):
       friends = tuple2list(friends)
     else: continue
 
-  for friend in friends:
-    flag = Mydatabase.check(friend)
-    print(flag)
-    if flag == "***" or flag == "followers_only":
-      friends_2 = update(flag, 'friends_only', friend)
-    elif flag == "friends_only" or flag == "all":
-      friends_2 = Mydatabase.select("select followerID from follow_graph where userID = \'" + friend + "\'")
-      friends_2 = tuple2list(friends)
-    else: continue
+    for friend in friends:
+      flag = Mydatabase.check(friend)
+      if flag == "***" or flag == "followers_only":
+        friends_2 = update(flag, 'friends_only', friend)
+      elif flag == "friends_only" or flag == "all":
+        friends_2 = Mydatabase.select("select followerID from follow_graph where userID = \'" + friend + "\'")
+        friends_2 = tuple2list(friends)
+      else: continue
 
-    match_list = list(set(match_list) | set(friends_2))
-    match_seeds = match(seed, friends_2, match_seeds)
-    print(len(match_list), len(match_seeds))
-
+      match_list = list(set(match_list) | set(friends_2))
+      match_seeds = match(seed, friends_2, match_seeds)
 
 
   return match_list, match_seeds
@@ -333,17 +329,17 @@ def basic_pass6(seeds):
       followers = tuple2list(followers)
     else: continue
 
-  for follower in followers:
-    flag = Mydatabase.check(follower)
-    if flag == "***" or flag == "friends_only":
-      followers_2 = update(flag, 'followers_only', follower)
-    elif flag == "followers_only" or flag == "all":
-      followers_2 = Mydatabase.select("select userID from follow_graph where userID = \'" + follower + "\'")
-      followers_2 = tuple2list(followers_2)
-    else: continue
+    for follower in followers:
+      flag = Mydatabase.check(follower)
+      if flag == "***" or flag == "friends_only":
+        followers_2 = update(flag, 'followers_only', follower)
+      elif flag == "followers_only" or flag == "all":
+        followers_2 = Mydatabase.select("select userID from follow_graph where userID = \'" + follower + "\'")
+        followers_2 = tuple2list(followers_2)
+      else: continue
 
-    match_list = list(set(match_list) | set(followers_2))
-    match_seeds = match(seed, followers_2, match_seeds)
+      match_list = list(set(match_list) | set(followers_2))
+      match_seeds = match(seed, followers_2, match_seeds)
 
 
   return match_list, match_seeds
