@@ -164,7 +164,7 @@ def check(main_list, check_list):
                 return_list.append(res["id_str"])
                 check_list[res["id_str"]] = [res["lang"], res["friends_count"], res["followers_count"]]
             else:
-                check_list[res["id_str"]] = [res["lang"], res["friends_count"], res["folowers_count"]]
+                check_list[res["id_str"]] = [res["lang"], res["friends_count"], res["followers_count"]]
     print('check:return_list[{0}], check_list[{1}], limit[{2}/900]'.format(len(return_list), len(check_list), limit))
     return return_list, limit, check_list
 
