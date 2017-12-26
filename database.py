@@ -96,7 +96,7 @@ def init():
     followers_doneID = []
     check_list = {}
 
-    _, __, check_list = check(seed, check_list) #params of followers_count,friends_count,lang are checked
+    _, __, check_list = check(seeds, check_list) #params of followers_count,friends_count,lang are checked
     print("init check_list : {0}".format(check_list))
 
 
