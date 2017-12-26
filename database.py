@@ -140,7 +140,7 @@ def check(main_list, check_list):
 
     for user in main_list:
         if user in check_list:
-            if check_list[user]: users_list.append(user)
+            if check_list[user][0] == "ja": users_list.append(user)
         else: users_list.append(user)
 
     users_list = MytwitterAPI.join_params(users_list, count = 100)
@@ -160,12 +160,11 @@ def check(main_list, check_list):
 
         ress = json.loads(responce.text)
         for res in ress:
-            if (res["friends_count"] < 1000) and (res["followers_count"] < 1000) and (res["lang"] == "ja"):
+            if res["lang"] == "ja":
                 return_list.append(res["id_str"])
-                check_list[res["id_str"]] = True
+                check_list[res["id_str"]] = [res["lang"], res["friends_count"], res["followers_count"]]
             else:
-                check_list[res["id_str"]] = False
-
+                check_list[res["id_str"]] = [res["lang"], res["friends_count"], res["folowers_count"]]
     print('check:return_list[{0}], check_list[{1}], limit[{2}/900]'.format(len(return_list), len(check_list), limit))
     return return_list, limit, check_list
 
