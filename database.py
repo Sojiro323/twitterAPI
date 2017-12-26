@@ -96,12 +96,15 @@ def init():
     followers_doneID = []
     check_list = {}
 
+    _, __, check_list = check(seed, check_list) #params of followers_count,friends_count,lang are checked
+    print("init check_list : {0}".format(check_list))
+
+
     for seed in seeds:
         friends_pop.append([seed,0])
         followers_pop.append([seed,0])
         friends_doneID.append(seed)
         followers_doneID.append(seed)
-        check_list[seed] = True
 
     return friends_pop, followers_pop, friends_doneID, followers_doneID, check_list
 
@@ -140,7 +143,6 @@ def check(main_list, check_list):
 
     for user in main_list:
         if user in check_list:
-          print(check_list[user])  
           if check_list[user][0] == "ja": users_list.append(user)
         else: users_list.append(user)
 
