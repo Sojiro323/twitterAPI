@@ -140,7 +140,8 @@ def check(main_list, check_list):
 
     for user in main_list:
         if user in check_list:
-            if check_list[user][0] == "ja": users_list.append(user)
+          print(check_list[user])  
+          if check_list[user][0] == "ja": users_list.append(user)
         else: users_list.append(user)
 
     users_list = MytwitterAPI.join_params(users_list, count = 100)
