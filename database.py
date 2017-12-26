@@ -20,7 +20,7 @@ import sys
 
 
 '''global'''
-seeds = ["2294473200"]
+seeds = ["2432059932"] #CIS
 max_hop = 3
 path = "./pickle/"
 '''end global'''
