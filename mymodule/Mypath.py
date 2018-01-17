@@ -3,31 +3,35 @@ from mymodule import MytwitterAPI
 import sys
 import time
 import datetime
-#path_pattern = ["1","2","3","4","5","6","mutual","3_3a","3_3b","3_35","3_36","3_4a","3_4b","3_45","3_46","3_5a","3_5b","3_6a","3_6b","4_123","4_124","4_125","4_126","4_3456","4_35a","4_35b","4_36a","4_36b","4_45a","4_45b","4_46a","4_46b","5_1235","5_1236","5_1245","5_1246","5_13456","5_23456","all"]
+path_pattern = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39"]
 
-
-path_pattern = ["1","2","3","4","5","6"]
 
 
 def get_match(pattern, seeds):
 
   if pattern is path_pattern[0]:#friend
     match_list, match_seeds = basic_pass1(seeds)
+    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[1]:#follower
     match_list, match_seeds = basic_pass2(seeds)
-  
+    match_seeds = join_dic([match_seeds])
+
   elif pattern is path_pattern[2]:#com_friend
     match_list, match_seeds = basic_pass3(seeds)
-  
+    match_seeds = join_dic([match_seeds])
+
   elif pattern is path_pattern[3]:#com_follower
     match_list, match_seeds = basic_pass4(seeds)
-  
+    match_seeds = join_dic([match_seeds])
+
   elif pattern is path_pattern[4]:#friend_friend
     match_list, match_seeds = basic_pass5(seeds)
+    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[5]:#follower_follower
     match_list, match_seeds = basic_pass5(seeds)
+    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[6]:#mutual
     list1, seeds1 = basic_pass1(seeds)
@@ -35,42 +39,234 @@ def get_match(pattern, seeds):
     match_list = list(set(list1) & set(list2))
     match_seeds = join_dic([seeds1, seeds2])
 
+  elif pattern is path_pattern[7]:#8
+    list1, seeds1 = basic_pass2(seeds)
+    list2, seeds2 = basic_pass3(seeds)
+    match_list = list(set(list1) & set(list2))
+    match_seeds = join_dic([seeds1, seeds2])
+
+  elif pattern is path_pattern[8]:#9
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass3(seeds)
+    match_list = list(set(list1) & set(list2))
+    match_seeds = join_dic([seeds1, seeds2])
+
+  elif pattern is path_pattern[9]:#10
+    list1, seeds1 = basic_pass3(seeds)
+    list2, seeds2 = basic_pass5(seeds)
+    match_list = list(set(list1) & set(list2))
+    match_seeds = join_dic([seeds1, seeds2])
+
+  elif pattern is path_pattern[10]:#11
+    list1, seeds1 = basic_pass3(seeds)
+    list2, seeds2 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2))
+    match_seeds = join_dic([seeds1, seeds2])
+
+  elif pattern is path_pattern[11]:#12
+    list1, seeds1 = basic_pass2(seeds)
+    list2, seeds2 = basic_pass4(seeds)
+    match_list = list(set(list1) & set(list2))
+    match_seeds = join_dic([seeds1, seeds2])
+
+  elif pattern is path_pattern[12]:#13
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass4(seeds)
+    match_list = list(set(list1) & set(list2))
+    match_seeds = join_dic([seeds1, seeds2])
+
+  elif pattern is path_pattern[13]:#14
+    list1, seeds1 = basic_pass4(seeds)
+    list2, seeds2 = basic_pass5(seeds)
+    match_list = list(set(list1) & set(list2))
+    match_seeds = join_dic([seeds1, seeds2])
+
+  elif pattern is path_pattern[14]:#15
+    list1, seeds1 = basic_pass4(seeds)
+    list2, seeds2 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2))
+    match_seeds = join_dic([seeds1, seeds2])
+
+  elif pattern is path_pattern[15]:#16
+    list1, seeds1 = basic_pass2(seeds)
+    list2, seeds2 = basic_pass5(seeds)
+    match_list = list(set(list1) & set(list2))
+    match_seeds = join_dic([seeds1, seeds2])
+
+  elif pattern is path_pattern[16]:#17
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass5(seeds)
+    match_list = list(set(list1) & set(list2))
+    match_seeds = join_dic([seeds1, seeds2])
+
+  elif pattern is path_pattern[17]:#18
+    list1, seeds1 = basic_pass2(seeds)
+    list2, seeds2 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2))
+    match_seeds = join_dic([seeds1, seeds2])
+
+  elif pattern is path_pattern[18]:#19
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2))
+    match_seeds = join_dic([seeds1, seeds2])
+
+  elif pattern is path_pattern[19]:#20
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass2(seeds)
+    list3, seeds3 = basic_pass3(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3))
+    match_seeds = join_dic([seeds1, seeds2, seeds3])
+
+  elif pattern is path_pattern[20]:#21
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass2(seeds)
+    list3, seeds3 = basic_pass4(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3))
+    match_seeds = join_dic([seeds1, seeds2, seeds3])
+
+  elif pattern is path_pattern[21]:#22
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass2(seeds)
+    list3, seeds3 = basic_pass5(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3))
+    match_seeds = join_dic([seeds1, seeds2, seeds3])
+
+  elif pattern is path_pattern[22]:#23
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass2(seeds)
+    list3, seeds3 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3))
+    match_seeds = join_dic([seeds1, seeds2, seeds3])
+
+  elif pattern is path_pattern[23]:#24
+    list1, seeds1 = basic_pass3(seeds)
+    list2, seeds2 = basic_pass4(seeds)
+    list3, seeds3 = basic_pass5(seeds)
+    list4, seeds4 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3) & set(list4))
+    match_seeds = join_dic([seeds1, seeds2, seeds3, seeds4])
+
+  elif pattern is path_pattern[24]:#25
+    list1, seeds1 = basic_pass2(seeds)
+    list2, seeds2 = basic_pass3(seeds)
+    list3, seeds3 = basic_pass5(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3))
+    match_seeds = join_dic([seeds1, seeds2, seeds3])
+
+  elif pattern is path_pattern[25]:#26
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass3(seeds)
+    list3, seeds3 = basic_pass5(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3))
+    match_seeds = join_dic([seeds1, seeds2, seeds3])
+
+  elif pattern is path_pattern[26]:#27
+    list1, seeds1 = basic_pass2(seeds)
+    list2, seeds2 = basic_pass3(seeds)
+    list3, seeds3 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3))
+    match_seeds = join_dic([seeds1, seeds2, seeds3])
+
+  elif pattern is path_pattern[27]:#28
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass3(seeds)
+    list3, seeds3 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3))
+    match_seeds = join_dic([seeds1, seeds2, seeds3])
+
+  elif pattern is path_pattern[28]:#29
+    list1, seeds1 = basic_pass2(seeds)
+    list2, seeds2 = basic_pass4(seeds)
+    list3, seeds3 = basic_pass5(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3))
+    match_seeds = join_dic([seeds1, seeds2, seeds3])
+
+  elif pattern is path_pattern[29]:#30
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass4(seeds)
+    list3, seeds3 = basic_pass5(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3))
+    match_seeds = join_dic([seeds1, seeds2, seeds3])
+
+  elif pattern is path_pattern[30]:#31
+    list1, seeds1 = basic_pass2(seeds)
+    list2, seeds2 = basic_pass4(seeds)
+    list3, seeds3 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3))
+    match_seeds = join_dic([seeds1, seeds2, seeds3])
+
+  elif pattern is path_pattern[31]:#32
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass4(seeds)
+    list3, seeds3 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3))
+    match_seeds = join_dic([seeds1, seeds2, seeds3])
+
+  elif pattern is path_pattern[32]:#33
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass2(seeds)
+    list3, seeds3 = basic_pass3(seeds)
+    list4, seeds4 = basic_pass5(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3) & set(list4))
+    match_seeds = join_dic([seeds1, seeds2, seeds3, seeds4])
+
+  elif pattern is path_pattern[33]:#34
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass2(seeds)
+    list3, seeds3 = basic_pass3(seeds)
+    list4, seeds4 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3) & set(list4))
+    match_seeds = join_dic([seeds1, seeds2, seeds3, seeds4])
+
+  elif pattern is path_pattern[34]:#35
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass2(seeds)
+    list3, seeds3 = basic_pass4(seeds)
+    list4, seeds4 = basic_pass5(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3) & set(list4))
+    match_seeds = join_dic([seeds1, seeds2, seeds3, seeds4])
+
+  elif pattern is path_pattern[35]:#36
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass2(seeds)
+    list3, seeds3 = basic_pass4(seeds)
+    list4, seeds4 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3) & set(list4))
+    match_seeds = join_dic([seeds1, seeds2, seeds3, seeds4])
+
+  elif pattern is path_pattern[36]:#37
+    list1, seeds1 = basic_pass2(seeds)
+    list2, seeds2 = basic_pass3(seeds)
+    list3, seeds3 = basic_pass4(seeds)
+    list4, seeds4 = basic_pass5(seeds)
+    list5, seeds5 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3) & set(list4) & set(list5))
+    match_seeds = join_dic([seeds1, seeds2, seeds3, seeds4, seeds5])
+
+  elif pattern is path_pattern[37]:#38
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass3(seeds)
+    list3, seeds3 = basic_pass4(seeds)
+    list4, seeds4 = basic_pass5(seeds)
+    list5, seeds5 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3) & set(list4) & set(list5))
+    match_seeds = join_dic([seeds1, seeds2, seeds3, seeds4, seeds5])
+
+  elif pattern is path_pattern[38]:#39
+    list1, seeds1 = basic_pass1(seeds)
+    list2, seeds2 = basic_pass2(seeds)
+    list3, seeds3 = basic_pass3(seeds)
+    list4, seeds4 = basic_pass4(seeds)
+    list5, seeds5 = basic_pass5(seeds)
+    list6, seeds6 = basic_pass6(seeds)
+    match_list = list(set(list1) & set(list2) & set(list3) & set(list4) & set(list5) & set(list6))
+    match_seeds = join_dic([seeds1, seeds2, seeds3, seeds4, seeds5, seeds6])
+
   else:
     print("key error")
 
 
-  '''elif pattern is path_pattern[7]:#3_3a  
-  elif pattern is path_pattern[8]:#3_3b
-  elif pattern is path_pattern[9]:#3_35
-  elif pattern is path_pattern[10]:#3_36
-  elif pattern is path_pattern[11]:#3_4a
-  elif pattern is path_pattern[12]:#3_4b
-  elif pattern is path_pattern[13]:#3_45
-  elif pattern is path_pattern[14]:#3_46
-  elif pattern is path_pattern[15]:#3_5a
-  elif pattern is path_pattern[16]:#3_5b
-  elif pattern is path_pattern[17]:#3_6a
-  elif pattern is path_pattern[18]:#3_6b
-  elif pattern is path_pattern[19]:#4_123
-  elif pattern is path_pattern[20]:#4_124
-  elif pattern is path_pattern[21]:#4_125
-  elif pattern is path_pattern[22]:#4_126
-  elif pattern is path_pattern[23]:#4_3456
-  elif pattern is path_pattern[24]:#4_35a
-  elif pattern is path_pattern[25]:#4_35b
-  elif pattern is path_pattern[26]:#4_36a
-  elif pattern is path_pattern[27]:#4_36b
-  elif pattern is path_pattern[28]:#4_45a
-  elif pattern is path_pattern[29]:#4_45b
-  elif pattern is path_pattern[30]:#4_46a
-  elif pattern is path_pattern[31]:#4_46b
-  elif pattern is path_pattern[32]:#5_1235
-  elif pattern is path_pattern[33]:#5_1236
-  elif pattern is path_pattern[34]:#5_1245
-  elif pattern is path_pattern[35]:#5_1246
-  elif pattern is path_pattern[36]:#5_13456
-  elif pattern is path_pattern[37]:#5_23456
-  elif pattern is path_pattern[38]:#all'''
 
 
   return match_list, match_seeds
@@ -85,7 +281,7 @@ def match(seed, match_list, match_seeds):
     if match not in match_seeds: match_seeds[match] = [seed]
     else: match_seeds[match] = match_seeds[match].append(seed)
 
-  return match_seeds
+  return match_seedsa
 
 def update(flag, goal, userID):
 
@@ -135,6 +331,8 @@ def use_API(userID, api):
     for follower in return_list:
       values.append((follower, userID))
     Mydatabase.insert("follow_graph", values)
+
+  return return_list
 
 
 def acsessAPI(userID, api):
@@ -193,7 +391,6 @@ def basic_pass1(seeds):
 
   for seed in seeds:
     flag = Mydatabase.check(seed)
-    print(flag)
     if flag == "***" or flag == "followers_only":
       friends = update(flag, 'friends_only', seed)
     elif flag == "friends_only" or flag == "all":
@@ -360,4 +557,3 @@ def join_dic(dics):
     ans[k] = list(set(temp))
 
   return ans
-

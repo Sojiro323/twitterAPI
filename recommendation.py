@@ -18,9 +18,52 @@ from selenium import webdriver
 '''global variable'''
 path = "./pickle/"
 start_score = 0.1
-path_pattern = ["1","2","3","4","5","6"]
-#path_pattern = ["1","2","3","4","5","6","mutual","3_3a","3_3b","3_35","3_36","3_4a","3_4b","3_45","3_46","3_5a","3_5b","3_6a","3_6b","4_123","4_124","4_125","4_126","4_3456","4_35a","4_35b","4_36a","4_36b","4_45a","4_45b","4_46a","4_46b","5_1235","5_1236","5_1245","5_1246","5_13456","5_23456","all"]
-#derive_pattern = {}
+query_ID = "1"
+
+path_pattern = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24",
+"25","26","27","28","29","30","31","32","33","34","35","36","37","38","39"]
+
+path_com = {
+"1":["1"],
+"2":["2"],
+"3":["3"],
+"4":["4"],
+"5":["5"],
+"6":["6"],
+"7":["1","2","7"],
+"8":["2","3","8"],
+"9":["1","3","9"],
+"10":["3","5","10"],
+"11":["3","6","11"],
+"12":["2","4","12"],
+"13":["1","4","13"],
+"14":["4","5","14"],
+"15":["4","6","15"],
+"16":["2","5","16"],
+"17":["1","5","17"],
+"18":["2","6","18"],
+"19":["1","6","19"],
+"20":["1","2","3","7","8","9","20"],
+"21":["1","2","4","7","12","13","21"],
+"22":["1","2","5","7","16","17","22"],
+"23":["1","2","6","7","18","19","23"],
+"24":["3","4","5","6","10","11","14","15","24"],
+"25":["2","3","5","8","10","16","25"],
+"26":["1","3","5","9","10","17","26"],
+"27":["2","3","6","8","11","18","27"],
+"28":["1","3","6","9","11","19","28"],
+"29":["2","4","5","12","14","16","29"],
+"30":["1","4","5","13","14","17","30"],
+"31":["2","4","6","12","15","18","31"],
+"32":["1","4","6","13","15","19","32"],
+"33":["1","2","3","5","7","8","9","10","16","17","20","22","25","26","33"],
+"34":["1","2","3","6","7","8","9","11","18","19","20","23","27","28","34"],
+"35":["1","2","4","5","7","12","13","14","16","17","21","22","29","30","35"],
+"36":["1","2","4","6","7","12","13","15","18","19","21","23","31","32","36"],
+"37":["2","3","4","5","6","8","10","11","12","14","15","16","18","24","25","27","29","31","37"],
+"38":["1","3","4","5","6","9","10","11","13","14","15","17","19","24","26","28","30","32","38"],
+"39":path_pattern
+}
 seeds = ["2294473200"]
 get_num = 10
 
@@ -79,7 +122,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
   for user in match_list:
 
-    if user in y_n: continue
+    if len(Mydatabase.select('select * from query where userID = \'' + user + '\' AND query_ID = \'' + query_ID + '\'')) != 0: continue
 
     responce = MytwitterAPI.show(user)
     if responce.status_code != 200:
@@ -105,12 +148,13 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
         break'''
 
 
-      if input_flag == "y" or input_flag == "n":
-        y_n[user] = input_flag
+      if input_flag == "y":
+        Mydatabase.insert("query", (userID, query_ID, "True"))
         break
-
+      elif input_flag == "n":
+        Mydatabase.insert("query", (userID, query_ID, "False"))
+        break
       else: print("input again!!")
-
 
 
     seeds = match_seeds[user]
@@ -121,7 +165,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
     else:
       seeds_score = update_score(False, pattern, seeds, seeds_score)
 
-    Mypickle.save(path,y_n)
+    Mypickle.save(path,seeds_score)
     continue_flag, next_pattern = passcheck_continue(pattern, seeds_score)
     if continue_flag: return match_users, next_pattern, seeds_score
 
@@ -145,10 +189,13 @@ def init_score(user, seeds_score):
 
 def update_score(flag, pattern, match_seeds, seeds_score):
 
+  p_com = path_com[pattern]
+
   for seed in match_seeds:
-    if flag: seeds_score[seed][pattern][1] += 1.0
-    else: seeds_score[seed][pattern][2] += 1.0
-    seeds_score[seed][pattern][0] = seeds_score[seed][pattern][1] * 1.0 / (seeds_score[seed][pattern][1] + seeds_score[seed][pattern][2])
+      for p in p_com:
+      if flag: seeds_score[seed][p][1] += 1.0
+      else: seeds_score[seed][p][2] += 1.0
+      seeds_score[seed][p][0] = seeds_score[seed][p][1] * 1.0 / (seeds_score[seed][p][1] + seeds_score[seed][p][2])
 
   return seeds_score
 
