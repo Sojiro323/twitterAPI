@@ -1,9 +1,10 @@
 from requests_oauthlib import OAuth1Session
 from requests.exceptions import ConnectionError
 from mymodule import Mypickle
+import yaml
 
 ### Constants
-f = open('../../password/twitterAPI.yml', 'r+'):
+f = open('../../password/twitterAPI.yml', 'r+')
 oath_key_dict = yaml.load(f)
 
 

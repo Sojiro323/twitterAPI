@@ -5,7 +5,7 @@ import MySQLdb
 import sys,os
 import yaml
 
-f = open('./password/database.yml', 'r+')
+f = open('../password/database.yml', 'r+')
 password = yaml.load(f)
 print(password)
 

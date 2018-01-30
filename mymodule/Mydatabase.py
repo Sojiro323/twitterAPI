@@ -29,26 +29,26 @@ for row in c.fetchall():
     print('Id:', row[0], 'Content:', row[1])
 '''
 
-open f = ('../../password/database.yml', 'r+'):
+f = open('../../password/database.yml', 'r+')
 password = yaml.load(f)
 
 
 def check(userID):
 
     with SSHTunnelForwarder(
-      (password[host], password[local_port]),
+      (password['host'], password['local_port']),
       ssh_host_key= None,
       ssh_pkey=None,
-      ssh_username=password[ssh_username],
-      ssh_password=password[ssh_password],
-      remote_bind_address=(password[ip], password[database_port])
+      ssh_username=password['ssh_username'],
+      ssh_password=password['ssh_password'],
+      remote_bind_address=(password['ip'], password['database_port'])
       ) as ssh:
 
-      conn = MySQLdb.connect(user=password[database_user],
-          host=password[database_host],
-          password=password[database_password],
+      conn = MySQLdb.connect(user=password['database_user'],
+          host=password['ip'],
+          password=password['database_password'],
           port=ssh.local_bind_port,
-          db=password[dbname])
+          db=password['dbname'])
       c = conn.cursor()
       sql = "select state from checked_list where userID = " + userID
       c.execute(sql)
@@ -60,19 +60,19 @@ def check(userID):
 def select(sql):
 
     with SSHTunnelForwarder(
-      (password[host], password[local_port]),
+      (password['host'], password['local_port']),
       ssh_host_key= None,
       ssh_pkey=None,
-      ssh_username=password[ssh_username],
-      ssh_password=password[ssh_password],
-      remote_bind_address=(password[ip], password[database_port])
+      ssh_username=password['ssh_username'],
+      ssh_password=password['ssh_password'],
+      remote_bind_address=(password['ip'], password['database_port'])
       ) as ssh:
 
-      conn = MySQLdb.connect(user=password[database_user],
-          host=password[database_host],
-          password=password[database_password],
+      conn = MySQLdb.connect(user=password['database_user'],
+          host=password['ip'],
+          password=password['database_password'],
           port=ssh.local_bind_port,
-          db=password[dbname])
+          db=password['dbname'])
       c = conn.cursor()
       c.execute(sql)
       result = c.fetchall()
@@ -82,19 +82,19 @@ def select(sql):
 def update(database, values):
 
     with SSHTunnelForwarder(
-      (password[host], password[local_port]),
+      (password['host'], password['local_port']),
       ssh_host_key= None,
       ssh_pkey=None,
-      ssh_username=password[ssh_username],
-      ssh_password=password[ssh_password],
-      remote_bind_address=(password[ip], password[database_port])
+      ssh_username=password['ssh_username'],
+      ssh_password=password['ssh_password'],
+      remote_bind_address=(password['ip'], password['database_port'])
       ) as ssh:
 
-      conn = MySQLdb.connect(user=password[database_user],
-          host=password[database_host],
-          password=password[database_password],
+      conn = MySQLdb.connect(user=password['database_user'],
+          host=password['ip'],
+          password=password['database_password'],
           port=ssh.local_bind_port,
-          db=password[dbname])
+          db=password['dbname'])
       c = conn.cursor()
 
       # レコードの更新
@@ -111,19 +111,19 @@ def update(database, values):
 def insert(database, values):
 
     with SSHTunnelForwarder(
-      (password[host], password[local_port]),
+      (password['host'], password['local_port']),
       ssh_host_key= None,
       ssh_pkey=None,
-      ssh_username=password[ssh_username],
-      ssh_password=password[ssh_password],
-      remote_bind_address=(password[ip], password[database_port])
+      ssh_username=password['ssh_username'],
+      ssh_password=password['ssh_password'],
+      remote_bind_address=(password['ip'], password['database_port'])
       ) as ssh:
 
-      conn = MySQLdb.connect(user=password[database_user],
-          host=password[database_host],
-          password=password[database_password],
+      conn = MySQLdb.connect(user=password['database_user'],
+          host=password['ip'],
+          password=password['database_password'],
           port=ssh.local_bind_port,
-          db=password[dbname])
+          db=password['dbname'])
       c = conn.cursor()
 
       # レコードの登録

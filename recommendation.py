@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding:utf-8 -*-
 from mymodule import Mail
 from mymodule import MytwitterAPI
@@ -154,7 +153,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
         ID = Mydatabase.select("select MAX(ID) from query")
         Mydatabase.insert("query", (int(ID) + 1, userID, query_ID, "0"))
         break
-      elif: input_flag == "half":
+      elif input_flag == "half":
         ID = Mydatabase.select("select MAX(ID) from query")
         Mydatavase.insert("query", (int(ID) + 1, userID, query_ID, "1"))
         break 
@@ -200,10 +199,10 @@ def update_score(flag, pattern, match_seeds, seeds_score):
 
   for seed in match_seeds:
       for p in p_com:
-      if flag == "true": seeds_score[seed][p][1] += 1.0
-      elif flag == "false": seeds_score[seed][p][3] += 1.0
-      else: seeds_score[seed][p][2] += 1.0
-      seeds_score[seed][p][0] = seeds_score[seed][p][1] * 1.0 / (seeds_score[seed][p][1] + seeds_score[seed][p][2] + seeds_score[seed][p][3])
+        if flag == "true": seeds_score[seed][p][1] += 1.0
+        elif flag == "false": seeds_score[seed][p][3] += 1.0
+        else: seeds_score[seed][p][2] += 1.0
+        seeds_score[seed][p][0] = seeds_score[seed][p][1] * 1.0 / (seeds_score[seed][p][1] + seeds_score[seed][p][2] + seeds_score[seed][p][3])
 
   return seeds_score
 
