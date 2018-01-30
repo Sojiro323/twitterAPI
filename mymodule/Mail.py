@@ -9,12 +9,12 @@ def sendmail(text):
     from email.header import Header
     from email.utils import formatdate
 
-    f = open('../password/mail.yml', 'r+'):
+    f = open('../../password/mail.yml', 'r+'):
     password = yaml.load(f)
 
     from_address = password["from_address"]
     to_address = password["to_address"]
-a
+
     charset = 'ISO-2022-JP'
     subject = u'プログラムが完了しました'
 

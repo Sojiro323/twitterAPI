@@ -29,7 +29,7 @@ for row in c.fetchall():
     print('Id:', row[0], 'Content:', row[1])
 '''
 
-open f = ('../password/database.yml', 'r+'):
+open f = ('../../password/database.yml', 'r+'):
 password = yaml.load(f)
 
 

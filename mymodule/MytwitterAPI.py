@@ -3,7 +3,7 @@ from requests.exceptions import ConnectionError
 from mymodule import Mypickle
 
 ### Constants
-f = open('../password/twitterAPI.yml', 'r+'):
+f = open('../../password/twitterAPI.yml', 'r+'):
 oath_key_dict = yaml.load(f)
 
 
