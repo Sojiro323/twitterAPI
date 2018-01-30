@@ -6,11 +6,10 @@ import yaml
 ### Constants
 
 
-def create_oath_session(oath_key_dict):
+def create_oath_session():
 
     f = open('../password/twitterAPI.yml', 'r+')
     oath_key_dict = yaml.load(f)
-
     oath = OAuth1Session(
     oath_key_dict["consumer_key"],
     oath_key_dict["consumer_secret"],
@@ -26,7 +25,7 @@ def show(user_ID):
     params = {
         "user_id": user_ID
         }
-    oath = create_oath_session(oath_key_dict)
+    oath = create_oath_session()
     try:
         responce = oath.get(url, params = params)
     except ConnectionError as e:
@@ -40,7 +39,7 @@ def lookup(users_ID):
         "user_id": users_ID,
         "stringify_ids": "true"
         }
-    oath = create_oath_session(oath_key_dict)
+    oath = create_oath_session()
     try:
         responce = oath.post(url, params = params)
     except ConnectionError as e:
@@ -56,7 +55,7 @@ def followers(userID):
         "user_id": userID,
         "stringify_ids": "true"
         }
-    oath = create_oath_session(oath_key_dict)
+    oath = create_oath_session()
     try:
         responce = oath.get(url, params = params)
         #responce = oath.post(url, params = params)
@@ -71,7 +70,7 @@ def friends(userID):
         "user_id": userID,
         "stringify_ids": "true"
         }
-    oath = create_oath_session(oath_key_dict)
+    oath = create_oath_session()
     try:
         responce = oath.get(url, params = params)
         #responce = oath.post(url, params = params)

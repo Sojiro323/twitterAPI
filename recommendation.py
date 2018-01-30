@@ -3,6 +3,7 @@ from mymodule import Mail
 from mymodule import MytwitterAPI
 from mymodule import Mypickle
 from mymodule import Mypath
+from mymodule import Mydatabase
 import time
 import json
 import os
@@ -63,7 +64,7 @@ path_com = {
 "38":["1","3","4","5","6","9","10","11","13","14","15","17","19","24","26","28","30","32","38"],
 "39":path_pattern
 }
-seeds = ["2294473200"]
+seeds = ["2294473200","761272495"]
 get_num = 10
 
 
@@ -72,13 +73,17 @@ def recommendation(pattern, seeds, seeds_score):
   print("pattern:{0} recommendation start!!".format(pattern))
   match_list, match_seeds = Mypath.get_match(pattern, seeds)
   print('match_list_lengh is {0}'.format(len(match_list)))
+  print(match_list)
+  print(match_seeds)
 
 
   if len(match_list) == 0: next_pattern = random.choice(path_pattern)
   else:
     match_list = ranking(pattern, match_list, match_seeds, seeds_score)
+    print("ranking finish!!")
     match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
     seeds = seeds + match_users
+    print("now seeds is {0}".format(seeds))
 
   return next_pattern, seeds, seeds_score
 
@@ -119,7 +124,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
   for user in match_list:
 
-    if len(Mydatabase.select('select * from query where userID = \'' + user + '\' AND query_ID = \'' + query_ID + '\'')) != 0: continue
+    if len(Mydatabase.select('SELECT * from query where userID = \'' + user + '\' AND queryID = \'' + query_ID + '\'')) != 0: continue
 
     responce = MytwitterAPI.show(user)
     if responce.status_code != 200:
@@ -127,7 +132,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
       sys.exit()
 
     ress = json.loads(responce.text)
-    print("\nuserID:{0}\nusername:{1}\nprofile:{2}\n".format(user,ress["name"].encode('utf-8'),ress["description"].encode('utf-8')))
+    print("\nuserID:{0}\nusername:{1}\nprofile:{2}\n".format(user,ress["name"],ress["description"]))
 
     webbrowser_flag = False
     while(1):
@@ -136,7 +141,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
       '''if input_flag == "h":
         driver = webdriver.Chrome("./chromedriver")
-        driver.get("https://twitter.com/intent/user?user_id=" + user)
+        driver.get(":)
         webbrowser_flag = True
 
       elif input_flag == "y" or input_flag == "n":
@@ -146,20 +151,20 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
 
       if input_flag == "true":
-        ID = Mydatabase.select("select MAX(ID) from query")
-        Mydatabase.insert("query", (int(ID) + 1, userID, query_ID, "2"))
+        ID = Mydatabase.select("SELECT MAX(ID) from query")
+        Mydatabase.insert("query", (str(int(ID[0][0]) + 1), userID, query_ID, "2"))
         break
       elif input_flag == "false":
-        ID = Mydatabase.select("select MAX(ID) from query")
-        Mydatabase.insert("query", (int(ID) + 1, userID, query_ID, "0"))
+        ID = Mydatabase.select("SELECT MAX(ID) from query")
+        Mydatabase.insert("query", (str(int(ID[0][0]) + 1), userID, query_ID, "0"))
         break
       elif input_flag == "half":
-        ID = Mydatabase.select("select MAX(ID) from query")
-        Mydatavase.insert("query", (int(ID) + 1, userID, query_ID, "1"))
-        break 
+        ID = Mydatabase.select("SELECT MAX(ID) from query")
+        Mydatavase.insert("query", (str(int(ID[0][0]) + 1), userID, query_ID, "1"))
+        break
       else: print("input again!!")
 
-    print(int(ID)+1)
+    print("{0} finish!!".format(int(ID[0][0])+1))
     seeds = match_seeds[user]
     if input_flag == "true":
       seeds_score = update_score(input_flag, pattern, seeds, seeds_score)
@@ -171,6 +176,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
     with open(path + "seeds_score_" + query_ID) as p:
       pickle.dump(seeds_score, p)
       print("save seeds_score")
+      print(seeds_score)
 
     continue_flag, next_pattern = passcheck_continue(pattern, seeds_score)
     if continue_flag: return match_users, next_pattern, seeds_score
@@ -234,11 +240,11 @@ if __name__ == "__main__":
   seeds_list = seeds
   start_num = len(seeds_list)
 
-  
+
   if os.path.isfile(path + "seeds_score_" + query_ID):
     seeds_score = Mypickle.load("path", "seeds_score_" + query_ID)
     _, next_pattern = passcheck_continue("0", seeds_score)
-  
+
   else:
     seeds_score = {}
     for seed in seeds_list:

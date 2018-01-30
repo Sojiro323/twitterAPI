@@ -37,15 +37,7 @@ def load_pass():
 
 def check(userID):
 
-    password = load_pass()
-    with SSHTunnelForwarder(
-      (password['host'], password['local_port']),
-      ssh_host_key= None,
-      ssh_pkey=None,
-      ssh_username=password['ssh_username'],
-      ssh_password=password['ssh_password'],
-      remote_bind_address=(password['ip'], password['database_port'])
-      ) as ssh:
+      password = load_pass()
 
       conn = MySQLdb.connect(user=password['database_user'],
           host=password['ip'],
@@ -62,15 +54,7 @@ def check(userID):
 
 def select(sql):
 
-    password = load_pass()
-    with SSHTunnelForwarder(
-      (password['host'], password['local_port']),
-      ssh_host_key= None,
-      ssh_pkey=None,
-      ssh_username=password['ssh_username'],
-      ssh_password=password['ssh_password'],
-      remote_bind_address=(password['ip'], password['database_port'])
-      ) as ssh:
+      password = load_pass()
 
       conn = MySQLdb.connect(user=password['database_user'],
           host=password['ip'],
@@ -85,15 +69,7 @@ def select(sql):
 
 def update(database, values):
 
-    password = load_pass()
-    with SSHTunnelForwarder(
-      (password['host'], password['local_port']),
-      ssh_host_key= None,
-      ssh_pkey=None,
-      ssh_username=password['ssh_username'],
-      ssh_password=password['ssh_password'],
-      remote_bind_address=(password['ip'], password['database_port'])
-      ) as ssh:
+      password = load_pass()
 
       conn = MySQLdb.connect(user=password['database_user'],
           host=password['ip'],
@@ -115,15 +91,7 @@ def update(database, values):
 
 def insert(database, values):
 
-    password = load_pass()
-    with SSHTunnelForwarder(
-      (password['host'], password['local_port']),
-      ssh_host_key= None,
-      ssh_pkey=None,
-      ssh_username=password['ssh_username'],
-      ssh_password=password['ssh_password'],
-      remote_bind_address=(password['ip'], password['database_port'])
-      ) as ssh:
+      password = load_pass()
 
       conn = MySQLdb.connect(user=password['database_user'],
           host=password['ip'],
