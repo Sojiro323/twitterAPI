@@ -1,6 +1,6 @@
 # coding: utf-8
 #cording python3
- 
+
 def sendmail(text):
 
     import smtplib
@@ -10,7 +10,7 @@ def sendmail(text):
     from email.header import Header
     from email.utils import formatdate
 
-    f = open('../../password/mail.yml', 'r+')
+    f = open('../password/mail.yml', 'r+')
     password = yaml.load(f)
 
     from_address = password["from_address"]

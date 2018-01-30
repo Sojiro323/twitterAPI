@@ -4,11 +4,12 @@ from mymodule import Mypickle
 import yaml
 
 ### Constants
-f = open('../../password/twitterAPI.yml', 'r+')
-oath_key_dict = yaml.load(f)
 
 
 def create_oath_session(oath_key_dict):
+
+    f = open('../password/twitterAPI.yml', 'r+')
+    oath_key_dict = yaml.load(f)
 
     oath = OAuth1Session(
     oath_key_dict["consumer_key"],

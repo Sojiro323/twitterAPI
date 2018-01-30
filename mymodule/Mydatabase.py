@@ -29,12 +29,15 @@ for row in c.fetchall():
     print('Id:', row[0], 'Content:', row[1])
 '''
 
-f = open('../../password/database.yml', 'r+')
-password = yaml.load(f)
+def load_pass():
+    f = open('../password/database.yml', 'r+')
+    password = yaml.load(f)
+    return password
 
 
 def check(userID):
 
+    password = load_pass()
     with SSHTunnelForwarder(
       (password['host'], password['local_port']),
       ssh_host_key= None,
@@ -59,6 +62,7 @@ def check(userID):
 
 def select(sql):
 
+    password = load_pass()
     with SSHTunnelForwarder(
       (password['host'], password['local_port']),
       ssh_host_key= None,
@@ -81,6 +85,7 @@ def select(sql):
 
 def update(database, values):
 
+    password = load_pass()
     with SSHTunnelForwarder(
       (password['host'], password['local_port']),
       ssh_host_key= None,
@@ -110,6 +115,7 @@ def update(database, values):
 
 def insert(database, values):
 
+    password = load_pass()
     with SSHTunnelForwarder(
       (password['host'], password['local_port']),
       ssh_host_key= None,
