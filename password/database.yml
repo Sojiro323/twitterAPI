@@ -1,0 +1,9 @@
+host : server.dl.soc.i.kyoto-u.ac.jp
+local_port : 22
+ssh_username : murakami
+ssh_password : Sojiro323
+ip : 127.0.0.1
+database_port : 3306
+database_user : root
+database_password : "23622059"
+dbname : twitterDB

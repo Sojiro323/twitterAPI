@@ -9,9 +9,9 @@ import os
 import sys
 import time
 
-path = "./pickle/"
+path = "../pickle/"
 
-'''
+
 load_files = Mypickle.load(path, ['check_list','friends_doneID','followers_doneID'])
 check_list = load_files[0]
 friends_doneID = load_files[1]
@@ -22,7 +22,6 @@ print(len(check_list),len(friends_doneID),len(followers_doneID))
 
 users_list = MytwitterAPI.join_params(check_list.keys(), count = 100)
 Mypickle.save(path, users_list)
-'''
 
 
 load_files = Mypickle.load(path, ['users_list','friends_doneID','followers_doneID'])
@@ -62,3 +61,24 @@ for i, users in enumerate(user_list):
     if i+1 < len(user_list):
         users_list = user_list[i+1:]
         Mypickle.save(path, users_list)
+
+
+
+load_files = Mypickle.load(path, ['friends_dic','followers_dic'])
+friends_dic = load_files[0]
+followers_dic = load_files[1]
+
+print(len(friends_dic),len(followers_dic))
+
+values = []
+for user,friends in friends_dic.items():
+    for friend in friends:
+        values.append((user,friend))
+
+
+for user,followers in followers_dic.items():
+    for follower in followers:
+        values.append((follower,user))
+
+print(len(values))
+Mydatabase.insert("follow_graph", values)

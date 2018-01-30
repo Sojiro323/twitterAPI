@@ -16,7 +16,7 @@ from selenium import webdriver
 
 
 '''global variable'''
-path = "./pickle/"
+path = "../query/"
 start_score = 0.1
 query_ID = "1"
 
@@ -116,8 +116,6 @@ def ranking(pattern, match_list, match_seeds, seeds_score):
 
 def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
-  if os.path.exists(path + "y_n.pickle"): y_n = Mypickle.load(path,'y_n')
-  else:y_n = {}
   match_users = []
 
   for user in match_list:
@@ -148,24 +146,33 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
         break'''
 
 
-      if input_flag == "y":
-        Mydatabase.insert("query", (userID, query_ID, "True"))
+      if input_flag == "true":
+        ID = Mydatabase.select("select MAX(ID) from query")
+        Mydatabase.insert("query", (int(ID) + 1, userID, query_ID, "2"))
         break
-      elif input_flag == "n":
-        Mydatabase.insert("query", (userID, query_ID, "False"))
+      elif input_flag == "false":
+        ID = Mydatabase.select("select MAX(ID) from query")
+        Mydatabase.insert("query", (int(ID) + 1, userID, query_ID, "0"))
         break
+      elif: input_flag == "half":
+        ID = Mydatabase.select("select MAX(ID) from query")
+        Mydatavase.insert("query", (int(ID) + 1, userID, query_ID, "1"))
+        break 
       else: print("input again!!")
 
-
+    print(int(ID)+1)
     seeds = match_seeds[user]
-    if input_flag == "y":
-      seeds_score = update_score(True, pattern, seeds, seeds_score)
+    if input_flag == "true":
+      seeds_score = update_score(input_flag, pattern, seeds, seeds_score)
       seeds_score = init_score(user, seeds_score)
       match_users.append(user)
     else:
-      seeds_score = update_score(False, pattern, seeds, seeds_score)
+      seeds_score = update_score(input_flag, pattern, seeds, seeds_score)
 
-    Mypickle.save(path,seeds_score)
+    with open(path + "seeds_score_" + query_ID) as p:
+      pickle.dump(seeds_score, p)
+      print("save seeds_score")
+
     continue_flag, next_pattern = passcheck_continue(pattern, seeds_score)
     if continue_flag: return match_users, next_pattern, seeds_score
 
@@ -179,7 +186,7 @@ def init_score(user, seeds_score):
 
   for seed_k,seed_v in seeds_score.items():
     for path_k, path_v in seed_v.items():
-      if path_k not in user_score: user_score[path_k] = [path_v[0]*1.0/count, 0.0, 0.0]
+      if path_k not in user_score: user_score[path_k] = [path_v[0]*1.0/count, 0.0, 0.0, 0.0]
       else: user_score[path_k][0] += path_v[0]*1.0/count
 
   seeds_score[user] = user_score
@@ -193,9 +200,10 @@ def update_score(flag, pattern, match_seeds, seeds_score):
 
   for seed in match_seeds:
       for p in p_com:
-      if flag: seeds_score[seed][p][1] += 1.0
+      if flag == "true": seeds_score[seed][p][1] += 1.0
+      elif flag == "false": seeds_score[seed][p][3] += 1.0
       else: seeds_score[seed][p][2] += 1.0
-      seeds_score[seed][p][0] = seeds_score[seed][p][1] * 1.0 / (seeds_score[seed][p][1] + seeds_score[seed][p][2])
+      seeds_score[seed][p][0] = seeds_score[seed][p][1] * 1.0 / (seeds_score[seed][p][1] + seeds_score[seed][p][2] + seeds_score[seed][p][3])
 
   return seeds_score
 
@@ -227,13 +235,18 @@ if __name__ == "__main__":
   seeds_list = seeds
   start_num = len(seeds_list)
 
-  seeds_score = {}
+  
+  if os.path.isfile(path + "seeds_score_" + query_ID):
+    seeds_score = Mypickle.load("path", "seeds_score_" + query_ID)
+    _, next_pattern = passcheck_continue("0", seeds_score)
+  
+  else:
+    seeds_score = {}
+    for seed in seeds_list:
+      seed_score = {p:[start_score,0,0,0] for p in path_pattern}  #[precision, good, bad]
+      seeds_score[seed] = seed_score
 
-  for seed in seeds_list:
-    seed_score = {p:[start_score,0,0] for p in path_pattern}  #[precision, good, bad]
-    seeds_score[seed] = seed_score
-
-  next_pattern = random.choice(path_pattern[0:6])
+    next_pattern = random.choice(path_pattern[0:6])
 
   while(len(seeds_list) < get_num + start_num):
       next_pattern, seeds_list, seeds_score = recommendation(next_pattern, seeds_list, seeds_score)

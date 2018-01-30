@@ -9,9 +9,12 @@ def sendmail(text):
     from email.header import Header
     from email.utils import formatdate
 
-    from_address = 'm23622059@gmail.com'
-    to_address = 'm23622059@i.softbank.jp'
+    f = open('../password/mail.yml', 'r+'):
+    password = yaml.load(f)
 
+    from_address = password["from_address"]
+    to_address = password["to_address"]
+a
     charset = 'ISO-2022-JP'
     subject = u'プログラムが完了しました'
 
@@ -25,7 +28,7 @@ def sendmail(text):
     smtp.ehlo()
     smtp.starttls()
     smtp.ehlo()
-    smtp.login('m23622059@gmail.com','m23622059')
+    smtp.login(password["from_address"],password["p"])
     smtp.sendmail(from_address, to_address, msg.as_string())
 
     smtp.close()

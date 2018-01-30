@@ -3,12 +3,9 @@ from requests.exceptions import ConnectionError
 from mymodule import Mypickle
 
 ### Constants
-oath_key_dict = {
-    "consumer_key": "r3KRXHuwQVJ0wB9GI75XMGYOn",
-    "consumer_secret": "f73EwbM5SR56aNbcWK4gVlSnnutS1zTrrVcVVL5MdLh6EDtmeo",
-    "access_token": "1307786538-ZvscWGeSot5JU0yIpPb1OXL2buysCsOTa2MvAdA",
-    "access_token_secret": "zupEdxQ6Gulfwxu5n0UZWSYqj805R8DqEjeU9KVFbjbaG"
-}
+f = open('../password/twitterAPI.yml', 'r+'):
+oath_key_dict = yaml.load(f)
+
 
 def create_oath_session(oath_key_dict):
 
