@@ -115,6 +115,7 @@ def ranking(pattern, match_list, match_seeds, seeds_score):
           ranking_list.append(match)
           match_list.remove(match)
     if t == len(seeds): print("best combination is \n {0}".format(ranking_list))
+    if len(ranking_list) == 100: break
 
   return ranking_list
 
@@ -181,6 +182,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
     continue_flag, next_pattern = passcheck_continue(pattern, seeds_score)
     if continue_flag: return match_users, next_pattern, seeds_score
+    elif continue_flag is False and input_flag == "true": break
 
   return match_users, next_pattern, seeds_score
 
