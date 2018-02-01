@@ -3,7 +3,7 @@ from mymodule import Mail
 from mymodule import MytwitterAPI
 from mymodule import Mypickle
 from mymodule import Mypath
-from mymodule import Mydatabase
+from mymodule import Server_Mydatabase
 import time
 import json
 import os
@@ -12,6 +12,7 @@ import random
 import itertools
 from operator import itemgetter
 from selenium import webdriver
+import pickle
 #import webbrowser
 
 
@@ -113,6 +114,7 @@ def ranking(pattern, match_list, match_seeds, seeds_score):
         if len(set(c).symmetric_difference(match_seeds[match])) == 0:
           ranking_list.append(match)
           match_list.remove(match)
+    if t == len(seeds): print("best combination is \n {0}".format(ranking_list))
 
   return ranking_list
 
@@ -124,7 +126,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
   for user in match_list:
 
-    if len(Mydatabase.select('SELECT * from query where userID = \'' + user + '\' AND queryID = \'' + query_ID + '\'')) != 0: continue
+    if len(Server_Mydatabase.select('SELECT * from query where userID = \'' + user + '\' AND queryID = \'' + query_ID + '\'')) != 0: continue
 
     responce = MytwitterAPI.show(user)
     if responce.status_code != 200:
@@ -136,7 +138,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
     webbrowser_flag = False
     while(1):
-      print("input y or n (help = h)")
+      print("input true or false or half (help = h)")
       input_flag = input('>>>  ')
 
       '''if input_flag == "h":
@@ -151,16 +153,16 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
 
       if input_flag == "true":
-        ID = Mydatabase.select("SELECT MAX(ID) from query")
-        Mydatabase.insert("query", (str(int(ID[0][0]) + 1), userID, query_ID, "2"))
+        ID = Server_Mydatabase.select("SELECT MAX(ID) from query")
+        Server_Mydatabase.insert("query", (str(int(ID[0][0]) + 1), user, query_ID, "2"))
         break
       elif input_flag == "false":
-        ID = Mydatabase.select("SELECT MAX(ID) from query")
-        Mydatabase.insert("query", (str(int(ID[0][0]) + 1), userID, query_ID, "0"))
+        ID = Server_Mydatabase.select("SELECT MAX(ID) from query")
+        Server_Mydatabase.insert("query", (str(int(ID[0][0]) + 1), user, query_ID, "0"))
         break
       elif input_flag == "half":
-        ID = Mydatabase.select("SELECT MAX(ID) from query")
-        Mydatavase.insert("query", (str(int(ID[0][0]) + 1), userID, query_ID, "1"))
+        ID = Server_Mydatabase.select("SELECT MAX(ID) from query")
+        Mydatavase.insert("query", (str(int(ID[0][0]) + 1), user, query_ID, "1"))
         break
       else: print("input again!!")
 
@@ -173,10 +175,9 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
     else:
       seeds_score = update_score(input_flag, pattern, seeds, seeds_score)
 
-    with open(path + "seeds_score_" + query_ID) as p:
+    with open(path + "seeds_score_" + query_ID + ".pickle", mode='wb') as p:
       pickle.dump(seeds_score, p)
-      print("save seeds_score")
-      print(seeds_score)
+    print("save seeds_score")
 
     continue_flag, next_pattern = passcheck_continue(pattern, seeds_score)
     if continue_flag: return match_users, next_pattern, seeds_score
@@ -191,25 +192,23 @@ def init_score(user, seeds_score):
 
   for seed_k,seed_v in seeds_score.items():
     for path_k, path_v in seed_v.items():
-      if path_k not in user_score: user_score[path_k] = [path_v[0]*1.0/count, 0.0, 0.0, 0.0]
-      else: user_score[path_k][0] += path_v[0]*1.0/count
+      if path_k not in user_score: user_score[path_k] = [0.0, 0, 0, 0]
+      user_score[path_k][0] += path_v[0]*1.0/count
 
   seeds_score[user] = user_score
-
   return seeds_score
 
 
 def update_score(flag, pattern, match_seeds, seeds_score):
 
   p_com = path_com[pattern]
-
+  print("match_seeds : {0}".format(match_seeds))
   for seed in match_seeds:
-      for p in p_com:
-        if flag == "true": seeds_score[seed][p][1] += 1.0
-        elif flag == "false": seeds_score[seed][p][3] += 1.0
-        else: seeds_score[seed][p][2] += 1.0
+    for p in p_com:
+        if flag == "true": seeds_score[seed][p][1] += 1
+        elif flag == "false": seeds_score[seed][p][3] += 1
+        else: seeds_score[seed][p][2] += 1
         seeds_score[seed][p][0] = seeds_score[seed][p][1] * 1.0 / (seeds_score[seed][p][1] + seeds_score[seed][p][2] + seeds_score[seed][p][3])
-
   return seeds_score
 
 
@@ -218,11 +217,18 @@ def passcheck_continue(pattern, seeds_score):
   score_list = {}
   for seed_k, seed_v in seeds_score.items():
     for path_k, path_v in seed_v.items():
-      if path_k not in score_list: score_list[path_k] = path_v[0]
-      else:
-        score_list[path_k] += path_v[0]
+      if path_k not in score_list: score_list[path_k] = 0
+      score_list[path_k] += path_v[0]/len(seeds_score) * 1.0
 
-  next_pattern = max(score_list.items(), key=itemgetter(1))[0]
+  max_val = max(score_list.values())
+  keys_of_max_val = [key for key in score_list if score_list[key] == max_val]
+
+  print("now graph pattern score is \n {0}".format(score_list))
+
+  if pattern in keys_of_max_val: next_pattern = pattern
+  elif len(list(set(keys_of_max_val) & set(["1","2","3","4","5","6","7"]))) != 0:
+    next_pattern = random.choice(list(set(keys_of_max_val) & set(["1","2","3","4","5","6","7"])))
+  else:next_pattern = random.choice(keys_of_max_val)
 
   if next_pattern == pattern: return False, next_pattern
   else: return True, next_pattern
@@ -241,9 +247,11 @@ if __name__ == "__main__":
   start_num = len(seeds_list)
 
 
-  if os.path.isfile(path + "seeds_score_" + query_ID):
-    seeds_score = Mypickle.load("path", "seeds_score_" + query_ID)
+  if os.path.isfile(path + "seeds_score_" + query_ID + ".pickle"):
+    seeds_score = Mypickle.load(path, "seeds_score_" + query_ID)
     _, next_pattern = passcheck_continue("0", seeds_score)
+   seeds_list = []
+   for seed in seeds_score.keys(): seeds_list.append(seed)
 
   else:
     seeds_score = {}
@@ -252,6 +260,7 @@ if __name__ == "__main__":
       seeds_score[seed] = seed_score
 
     next_pattern = random.choice(path_pattern[0:6])
+    for seed in seeds:Mydatavase.insert("query", (0, seed, query_ID, "None"))
 
   while(len(seeds_list) < get_num + start_num):
       next_pattern, seeds_list, seeds_score = recommendation(next_pattern, seeds_list, seeds_score)

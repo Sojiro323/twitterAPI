@@ -3,6 +3,7 @@ from mymodule import MytwitterAPI
 import sys
 import time
 import datetime
+import json
 path_pattern = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39"]
 
 
@@ -194,58 +195,71 @@ def update(goal, userID):
   if goal == 'all':
     if flag == '***':
       friends = use_API(userID, 'friends')
+      if friends is not None: Mydatabase.update(checked_list, (userID, 'friends_onlynv', userID))
       followers = use_API(userID, 'followers')
+      if followers is not None: Mydatabase.update(checked_list, (userID, 'all', userID))
     elif flag == 'followers_only':
       friends = use_API(userID, 'friends')
       followers = Mydatabase.select('select userID from follow_graph where followerID = \'' + userID + '\'')
-      followers = tuple2list(follower)
-      Mydatabase.update(checked_list, (userID, 'all', userID))
+      followers = tuple2list(followers)
+      if followers is not None: Mydatabase.update(checked_list, (userID, 'all', userID))
     elif flag == 'friends_only':
       followers == use_API(userID, 'followers')
       friends = Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
-      friends = tuple2list(friend)
-      Mydatabase.update(checked_list, (userID, 'all', userID))
+      friends = tuple2list(friends)
+      if friends is not None: Mydatabase.update(checked_list, (userID, 'all', userID))
+    elif flag == "all":
+      friends = Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
+      friends = tuple2list(friends)
+      followers = Mydatabase.select('select userID from follow_graph where followerID = \'' + userID + '\'')
+      followers = tuple2list(followers)
 
+    if friends is None or followers is None: return [], []
     return friends, followers
 
   elif goal == 'friends_only':
     if flag == 'followers_only':
       friends = use_API(userID, 'friends')
-      Mydatabase.update('checked_list', (userID, 'all', userID))
+      if friends is not None: Mydatabase.update('checked_list', (userID, 'all', userID))
     elif flag == '***':
       friends = use_API(userID, 'friends')
-      Mydatabase.update('checked_list', (userID, 'friends_only', userID))
+      if friends is not None: Mydatabase.update('checked_list', (userID, 'friends_only', userID))
     elif flag == 'friends_only' or flag == 'all':
       friends = Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
-      friends = tuple2list(friend)
+      friends = tuple2list(friends)
 
+    if friends is None: return []
     return friends
 
   elif goal == 'followers_only':
     if flag == 'friends_only':
       followers = use_API(userID, 'followers')
-      Mydatabase.update('checked_list', (userID, 'all', userID))
+      if followers is not None: Mydatabase.update('checked_list', (userID, 'all', userID))
     elif flag == '***':
       followers = use_API(userID, 'followers')
-      Mydatabase.update('checked_list', (userID, 'followers_only', userID))
+      if followers is not None: Mydatabase.update('checked_list', (userID, 'followers_only', userID))
     elif flag == 'followers_only' or flag == 'all':
       followers = Mydatabase.select('select userID from follow_graph where followerID = \'' + userID + '\'')
-      followers = tuple2list(follower)
+      followers = tuple2list(followers)
 
+    if followers is None: return []
     return followers
 
 
 def use_API(userID, api):
 
+  print("start API : {0}".format(userID))
   values = []
   if api == 'friends':
     return_list = acsessAPI(userID, 'friends')
+    if return_list is None: return None
     for friend in return_list:
       values.append((userID, friend))
     Mydatabase.insert("follow_graph", values)
 
   else:
     return_list = acsessAPI(userID, 'followers')
+    if return_list is None: return None
     for follower in return_list:
       values.append((follower, userID))
     Mydatabase.insert("follow_graph", values)
@@ -280,18 +294,20 @@ def acsessAPI(userID, api):
     Mydatabase.update('api_limit', (api, limit, now, api))
 
     if responce.status_code != 200:
-      print("Error code: %d" %(responce.status_code))
+      print("{0} : Error code: {2}".format(userID, responce.status_code))
       if responce.status_code == 401:
         Mydatabase.update('checked_list', (userID, 'protected', userID))
       elif responce.status_code == 404:
         Mydatabase.update('checked_list', (userID, 'NotFound', userID))
+    return None
 
 
 
     IDs = json.loads(responce.text)
-    for ID in IDs["ids"]:
+    for ID in IDs['ids']:
         return_list.append(ID)
 
+    print('{0} \'s return list : \n {1}'.format(userID, return_list))
     return return_list
 
 

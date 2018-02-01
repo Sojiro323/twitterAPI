@@ -38,7 +38,6 @@ def load_pass():
 def check(userID):
 
       password = load_pass()
-
       conn = MySQLdb.connect(user=password['database_user'],
           host=password['ip'],
           password=password['database_password'],
@@ -55,7 +54,6 @@ def check(userID):
 def select(sql):
 
       password = load_pass()
-
       conn = MySQLdb.connect(user=password['database_user'],
           host=password['ip'],
           password=password['database_password'],
@@ -70,7 +68,6 @@ def select(sql):
 def update(database, values):
 
       password = load_pass()
-
       conn = MySQLdb.connect(user=password['database_user'],
           host=password['ip'],
           password=password['database_password'],
@@ -92,7 +89,6 @@ def update(database, values):
 def insert(database, values):
 
       password = load_pass()
-
       conn = MySQLdb.connect(user=password['database_user'],
           host=password['ip'],
           password=password['database_password'],
