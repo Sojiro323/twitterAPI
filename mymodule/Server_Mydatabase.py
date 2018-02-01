@@ -41,7 +41,6 @@ def check(userID):
       conn = MySQLdb.connect(user=password['database_user'],
           host=password['ip'],
           password=password['database_password'],
-          port=ssh.local_bind_port,
           db=password['dbname'])
       c = conn.cursor()
       sql = "SELECT state from checked_list where userID = " + userID
@@ -57,7 +56,6 @@ def select(sql):
       conn = MySQLdb.connect(user=password['database_user'],
           host=password['ip'],
           password=password['database_password'],
-          port=ssh.local_bind_port,
           db=password['dbname'])
       c = conn.cursor()
       c.execute(sql)
@@ -71,7 +69,6 @@ def update(database, values):
       conn = MySQLdb.connect(user=password['database_user'],
           host=password['ip'],
           password=password['database_password'],
-          port=ssh.local_bind_port,
           db=password['dbname'])
       c = conn.cursor()
 
@@ -92,7 +89,6 @@ def insert(database, values):
       conn = MySQLdb.connect(user=password['database_user'],
           host=password['ip'],
           password=password['database_password'],
-          port=ssh.local_bind_port,
           db=password['dbname'])
       c = conn.cursor()
 

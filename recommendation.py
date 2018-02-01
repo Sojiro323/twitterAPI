@@ -19,7 +19,7 @@ import pickle
 '''global variable'''
 path = "../query/"
 start_score = 0.1
-query_ID = "1"
+query_ID = "2"
 
 path_pattern = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24",
 "25","26","27","28","29","30","31","32","33","34","35","36","37","38","39"]
@@ -252,8 +252,8 @@ if __name__ == "__main__":
   if os.path.isfile(path + "seeds_score_" + query_ID + ".pickle"):
     seeds_score = Mypickle.load(path, "seeds_score_" + query_ID)
     _, next_pattern = passcheck_continue("0", seeds_score)
-   seeds_list = []
-   for seed in seeds_score.keys(): seeds_list.append(seed)
+    seeds_list = []
+    for seed in seeds_score.keys(): seeds_list.append(seed)
 
   else:
     seeds_score = {}
@@ -262,7 +262,7 @@ if __name__ == "__main__":
       seeds_score[seed] = seed_score
 
     next_pattern = random.choice(path_pattern[0:6])
-    for seed in seeds:Mydatavase.insert("query", (0, seed, query_ID, "None"))
+    for seed in seeds:Server_Mydatabase.insert("query", (0, seed, query_ID, "None"))
 
   while(len(seeds_list) < get_num + start_num):
       next_pattern, seeds_list, seeds_score = recommendation(next_pattern, seeds_list, seeds_score)
