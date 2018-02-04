@@ -181,8 +181,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
     print("save seeds_score")
 
     continue_flag, next_pattern = passcheck_continue(pattern, seeds_score)
-    if continue_flag: return match_users, next_pattern, seeds_score
-    elif continue_flag is False and input_flag == "true": break
+    if continue_flag is True or (continue_flag is False and input_flag == "true"): break
 
   return match_users, next_pattern, seeds_score
 
