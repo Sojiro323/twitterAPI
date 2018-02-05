@@ -64,8 +64,8 @@ def tweet(keyword, count):
 
   ress = json.loads(responce.text)["statuses"]
   for res in ress:
-    match_list.append(res["user"]["id_str"])
-    tweets.append(res['text'])
+      match_list.append(res["user"]["id_str"])
+      tweets.append(res['text'])
 
   return match_list, tweets
 
@@ -101,7 +101,7 @@ def user(keyword, count):
 if __name__ == "__main__":
 
   while(1):
-    print("input queryID")
+    print("input queryID")i
     
     queryID = input('>>> ')
 
@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
   if method in methods[:3]:
     match_list, match_seeds = Mypath.get_match(path_index[method], seeds)
-    match_list = ranking(seeds, match_list, match_seeds)
+    #match_list = ranking(seeds, match_list, match_seeds)
   elif method == "tweet":
     match_list, _ = tweet(keyword, count)
   elif method  == "profile":
@@ -146,7 +146,7 @@ if __name__ == "__main__":
   
   for user in match_list:
     
-    if len(Server_Mydatabase.select("SELECT * from query where queryID = \'" + queryID + "\'" + "and userID = \'" + user + "\'") == 0): continue
+    if len(Server_Mydatabase.select("SELECT * from query where queryID = \'" + queryID + "\'" + "and userID = \'" + user + "\'") != 0): continue
 
     responce = MytwitterAPI.show(user)
     if responce.status_code != 200:

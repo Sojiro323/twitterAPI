@@ -555,7 +555,7 @@ def basic_pass13(seeds):
 
     for follower in followers:
       followers2friends = update("friends_only",follower)
-      if len(follower2friends) == 0: continue
+      if len(followers2friends) == 0: continue
 
       ans = list(set(friends) & set(followers2friends))
       ans = list(set(ans) - set(seeds))
