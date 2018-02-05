@@ -6,6 +6,55 @@ import os
 import sys
 
 
+path_com = {
+1:[1],
+2:[2],
+3:[3],
+4:[4],
+5:[5],
+6:[6],
+7:[1,2],
+8:[2,3],
+9:[1,3],
+10:[3,5],
+11:[3,6],
+12:[2,4],
+13:[1,4],
+14:[4,5],
+15:[4,6],
+16:[2,5],
+17:[1,5],
+18:[2,6],
+19:[1,6],
+20:[1,2,3],
+21:[1,2,4],
+22:[1,2,5],
+23:[1,2,6],
+24:[3,4,5,6],
+25:[2,3,5],
+26:[1,3,5],
+27:[2,3,6],
+28:[1,3,6],
+29:[2,4,5],
+30:[1,4,5],
+31:[2,4,6],
+32:[1,4,6],
+33:[1,2,3,5],
+34:[1,2,3,6],
+35:[1,2,4,5],
+36:[1,2,4,6],
+37:[2,3,4,5,6],
+38:[1,3,4,5,6],
+39:[1,2,3,4,5,6]
+}
+
+def check(2node):
+
+  for v in 2node:
+    
+    if len(v) != 0: return True
+
+  return False
 
 if __name__ == "__main__":
 
@@ -58,12 +107,12 @@ if __name__ == "__main__":
 
     for friend in friends:
       friend2friend, friend2follower = Mypath.update("all", friend)
-      ans_friend = list((set(friend2friend) & set(seeds + match)) - set(user))
-      ans_follower = list((set(friend2follower) & set(seeds + match)) - set(user))
+      ans_friend = list((set(friend2friend) & set(seeds + match)) - set([user]))
+      ans_follower = list((set(friend2follower) & set(seeds + match)) - set([user]))
       node2node[user]["friend2friend"] = []
       node2node[user]["friend2follower"] = []
-      for i in ans_friend: node2node[user]["friend2friend"].append([friend, i])
-      for i in ans_follower: node2node[user]["friend2follower"].append([friend, i])
+      for i in ans_friend: node2node[user]["friend2friend"].append(i)
+      for i in ans_follower: node2node[user]["friend2follower"].append(i)
       nodeofflags[user][2] = False
       nodeofflags[user][3] = False
   
@@ -80,12 +129,12 @@ if __name__ == "__main__":
  
     for follower in followers
       follower2friend, follower2follower = Mypath.update("all", follower)
-      ans_friend = list((set(follower2friend) & set(seeds + match)) - set(user))
-      ans_follower = list((set(follower2follower) & set(seeds + match)) - set(user))
+      ans_friend = list((set(follower2friend) & set(seeds + match)) - set([user]))
+      ans_follower = list((set(follower2follower) & set(seeds + match)) - set([user]))
       node2node[user]["follower2friend"] = []
       node2node[user]["follower2follower"] = []
-      for i in ans_friend: node2node[user]["follower2friend"].append([follower, i])
-      for i in ans_follower: node2node[user]["follower2follower"].append([follower, i])
+      for i in ans_friend: node2node[user]["follower2friend"].append(i)
+      for i in ans_follower: node2node[user]["follower2follower"].append(i)
       nodeofflags[user][4] = False
       nodeofflags[user][5] = False
   
@@ -100,8 +149,8 @@ if __name__ == "__main__":
         nodeofflags[follower][1] = False
   
     
-    ans_friend = list((set(friend) & set(seeds + match)) - set(user))
-    ans_follower = list((set(follower) & set(seeds + match)) - set(user))
+    ans_friend = list((set(friend) & set(seeds + match)) - set([user]))
+    ans_follower = list((set(follower) & set(seeds + match)) - set([user]))
     node2node[user]["friend"] = []
     node2node[user]["follower"] = []
     for i in ans_friend: node2node[user]["friend"].append(i)
@@ -109,3 +158,40 @@ if __name__ == "__main__":
 
   Mypickle.save("../query/", node2node)
 
+  print("test")
+  for node in node2node:
+    print(node)
+    break
+
+  gpaph_count = [0] * 39
+  p_dic = ["friend":1, "follower":2, "friend2follower":3, "follower2friend":4, "friend2follower":5, "follower2follower":6] 
+
+  for user in (seeds + match):
+
+    2node = node2node[user] #dic
+    count = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0}
+
+    while(check(2node)):
+
+      for k, v in 2node.items():
+        if len(v) != 0:
+          opponent = v.pop(0)
+          count[p_dic[k]] += 1
+          break
+
+      for k,v in 2node.items():
+        count[p_dic[k]] += v.count(opponent)
+        2node[k] = list(set[v] - set([opponent])))
+
+      
+      ts = [k for k in count.keys() if count[k] != 0]
+      j = 1
+      for t in ts:
+        if t >= 3: j *= count[t]
+
+      for i, p in p_com.items():
+      
+        if len(set(p) - set(ts)) == 0:
+          graph_count[i-1] += j
+  
+  Mypickle.save("../query/", graphcount)
