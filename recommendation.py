@@ -15,10 +15,9 @@ from selenium import webdriver
 import pickle
 #import webbrowser
 
-
 '''global variable'''
 path = "../query/"
-start_score = 0.1
+start_score = 0.6
 query_ID = "2"
 
 path_pattern = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24",
@@ -71,20 +70,17 @@ get_num = 10
 
 def recommendation(pattern, seeds, seeds_score):
 
-  print("pattern:{0} recommendation start!!".format(pattern))
+  print("pattern : {0}".format(pattern))
   match_list, match_seeds = Mypath.get_match(pattern, seeds)
-  print('match_list_lengh is {0}'.format(len(match_list)))
-  print(match_list)
-  print(match_seeds)
+  print('match_list_lengh : {0}'.format(len(match_list)))
 
 
   if len(match_list) == 0: next_pattern = random.choice(path_pattern)
   else:
     match_list = ranking(pattern, match_list, match_seeds, seeds_score)
-    print("ranking finish!!")
     match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
     seeds = seeds + match_users
-    print("now seeds is {0}".format(seeds))
+    print("now seeds : {0}".format(seeds))
 
   return next_pattern, seeds, seeds_score
 
@@ -154,20 +150,20 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
 
       if input_flag == "true":
-        ID = Server_Mydatabase.select("SELECT MAX(ID) from query")
+        ID = Server_Mydatabase.select("SELECT MAX(ID) from query where queryID = \'" + query_ID + "\'")
         Server_Mydatabase.insert("query", (str(int(ID[0][0]) + 1), user, query_ID, "2"))
         break
       elif input_flag == "false":
-        ID = Server_Mydatabase.select("SELECT MAX(ID) from query")
+        ID = Server_Mydatabase.select("SELECT MAX(ID) from query where queryID = \'" + query_ID + "\'")
         Server_Mydatabase.insert("query", (str(int(ID[0][0]) + 1), user, query_ID, "0"))
         break
       elif input_flag == "half":
-        ID = Server_Mydatabase.select("SELECT MAX(ID) from query")
+        ID = Server_Mydatabase.select("SELECT MAX(ID) from query where queryID = \'" + query_ID + "\'")
         Mydatavase.insert("query", (str(int(ID[0][0]) + 1), user, query_ID, "1"))
         break
       else: print("input again!!")
 
-    print("{0} finish!!".format(int(ID[0][0])+1))
+    print("{0} people checked!!".format(int(ID[0][0])+1))
     seeds = match_seeds[user]
     if input_flag == "true":
       seeds_score = update_score(input_flag, pattern, seeds, seeds_score)
@@ -178,7 +174,6 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
     with open(path + "seeds_score_" + query_ID + ".pickle", mode='wb') as p:
       pickle.dump(seeds_score, p)
-    print("save seeds_score")
 
     continue_flag, next_pattern = passcheck_continue(pattern, seeds_score)
     if continue_flag is True or (continue_flag is False and input_flag == "true"): break
@@ -203,7 +198,7 @@ def init_score(user, seeds_score):
 def update_score(flag, pattern, match_seeds, seeds_score):
 
   p_com = path_com[pattern]
-  print("match_seeds : {0}".format(match_seeds))
+  print("UPDATE SCORE : {0}".format(match_seeds))
   for seed in match_seeds:
     for p in p_com:
         if flag == "true": seeds_score[seed][p][1] += 1
@@ -224,12 +219,12 @@ def passcheck_continue(pattern, seeds_score):
   max_val = max(score_list.values())
   keys_of_max_val = [key for key in score_list if score_list[key] == max_val]
 
-  print("now graph pattern score is \n {0}".format(score_list))
+  print("now graph pattern score\n {0}\n\n".format(score_list))
 
-  if pattern in keys_of_max_val: next_pattern = pattern
-  elif len(list(set(keys_of_max_val) & set(["1","2","3","4","5","6","7"]))) != 0:
-    next_pattern = random.choice(list(set(keys_of_max_val) & set(["1","2","3","4","5","6","7"])))
-  else:next_pattern = random.choice(keys_of_max_val)
+  if pattern in keys_of_max_val:
+    next_pattern = pattern
+  else:
+    next_pattern = path_pattern[int(random.choice(keys_of_max_val))-1]
 
   if next_pattern == pattern: return False, next_pattern
   else: return True, next_pattern
@@ -246,9 +241,11 @@ if __name__ == "__main__":
 
   seeds_list = seeds
   start_num = len(seeds_list)
+  
+  print("query_ID is {0}\n".format(query_ID)) 
 
-
-  if os.path.isfile(path + "seeds_score_" + query_ID + ".pickle"):
+  c_flag = Server_Mydatabase.select("SELECT * from query where queryID = \'" + query_ID + "\'")
+  if len(c_flag) > len(seeds_list):
     seeds_score = Mypickle.load(path, "seeds_score_" + query_ID)
     _, next_pattern = passcheck_continue("0", seeds_score)
     seeds_list = []

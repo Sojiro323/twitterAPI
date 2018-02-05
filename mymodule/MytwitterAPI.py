@@ -79,6 +79,36 @@ def friends(userID):
     return responce
 
 
+def tweets(keyword, count):
+    url = "https://api.twitter.com/1.1/search/tweets.json?"
+    params = {
+        "q": keyword,
+        "lang": "ja",
+        "result_type": "mixed",
+        "count": count
+        }
+    oath = create_oath_session()
+    try:
+        responce = oath.get(url, params = params)
+    except ConnectionError as e:
+        return tweet(userID)
+    return responce
+
+
+def users(keyword, page, count):
+    url = "https://api.twitter.com/1.1/users/search.json?"
+    params = {
+        "q": keyword,
+        "page": page,
+        "count": count
+        }
+    oath = create_oath_session()
+    try:
+        responce = oath.get(url, params = params)
+    except ConnectionError as e:
+        return tweet(userID)
+    return responce
+
 def join_params(params_list,*,count = 0):
 
     lookup = ""

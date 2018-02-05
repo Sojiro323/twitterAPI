@@ -31,7 +31,7 @@ def get_match(pattern, seeds):
     match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[5]:#follower_follower
-    match_list, match_seeds = basic_pass5(seeds)
+    match_list, match_seeds = basic_pass6(seeds)
     match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[6]:#mutual
@@ -167,10 +167,7 @@ def get_match(pattern, seeds):
     match_seeds = join_dic([match_seeds])
 
   else:
-    print("key error")
-
-
-
+    print("key error : {0}".format(pattern))
 
   return match_list, match_seeds
 
@@ -1093,7 +1090,7 @@ def basic_pass37(seeds):
 
     return match_list, match_seeds
 
-def basic_pass24(seeds):
+def basic_pass39(seeds):
 
   match_list = []
   match_seeds = {}
