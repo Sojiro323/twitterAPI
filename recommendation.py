@@ -2,7 +2,6 @@
 from mymodule import Mail
 from mymodule import MytwitterAPI
 from mymodule import Mypickle
-from mymodule import Mypath
 from mymodule import Server_Mydatabase
 import time
 import json
@@ -68,10 +67,11 @@ seeds = ["2294473200","761272495"]
 get_num = 10
 
 
-def recommendation(pattern, seeds, seeds_score):
+def recommendation(d_flag, pattern, seeds, seeds_score):
 
   print("pattern : {0}".format(pattern))
-  match_list, match_seeds = Mypath.get_match(pattern, seeds)
+  if d_flag: match_list, match_seeds = Mypath.get_match(pattern, seeds)
+  else: match_list, match_seeds = old_Mypath.get_match(pattern, seeds)
   print('match_list_lengh : {0}'.format(len(match_list)))
 
 
@@ -81,8 +81,12 @@ def recommendation(pattern, seeds, seeds_score):
     match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
 
     while(pattern == next_pattern):
-      add_match_list, add_match_seeds = Mypath.get_match(pattern, match_users)
-      match_seeds = Mypath.join_dic([match_seeds, add_match_seeds])
+      if d_flag:
+        add_match_list, add_match_seeds = Mypath.get_match(pattern, match_users)
+        match_seeds = Mypath.join_dic([match_seeds, add_match_seeds])
+      else:
+        add_match_list, add_match_seeds = old_Mypath.get_match(pattern, match_users)
+        match_seeds = old_Mypath.join_dic([match_seeds, add_match_seeds])
       match_list = list(set(match_list) & set(add_match_list))
       match_list = ranking(pattern, match_list, match_seeds, seeds_score)
       match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
@@ -249,6 +253,19 @@ if __name__ == "__main__":
 
   seeds_list = seeds
   start_num = len(seeds_list)
+
+  while(1):
+    print("input using database : old or new"))
+    
+    d = input('>>> ')
+
+    if d == "new": 
+      d_flag = True
+      break
+    elif d == "old": 
+      d_flag = False
+      break
+    else: "\ninput again!!\n\n"
   
   print("query_ID is {0}\n".format(query_ID)) 
 
@@ -269,6 +286,6 @@ if __name__ == "__main__":
     for seed in seeds:Server_Mydatabase.insert("query", (0, seed, query_ID, "None"))
 
   while(len(seeds_list) < get_num + start_num):
-      next_pattern, seeds_list, seeds_score = recommendation(next_pattern, seeds_list, seeds_score)
+      next_pattern, seeds_list, seeds_score = recommendation(d_flag, next_pattern, seeds_list, seeds_score)
 
   visualize(seeds_list[start_num:])

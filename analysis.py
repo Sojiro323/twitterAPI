@@ -100,16 +100,18 @@ if __name__ == "__main__":
   
   path = "../query/analysis/"
   doc_name = queryID + "_node2node" 
-  if os.path.exists(path + doc_name): node2node = Mypickle.load(path, doc_name)
-  
-  for u in seeds + match:
-    node2node[u] = {}
-    nodeofflags[u] = [True, True] 
+  if os.path.exists(path + doc_name + ".pickle"): node2node = Mypickle.load(path, doc_name)
+  print(len(node2node)) 
 
   print("seeds : {0}".format(seeds))
   print("match : {0}".format(match))
 
   for user in seeds + match:
+
+    if user in node2node.keys(): continue
+    
+    node2node[user] = {}
+    if user not in nodeofflags: nodeofflags[user] = [True, True] 
 
     print("\nuser : {0} start".format(user))
 
@@ -146,7 +148,9 @@ if __name__ == "__main__":
       for i in ans_follower: node2node[user]["friend2follower"].append([friend, i])
   
       if (friend in seeds + match):
-        
+    
+        if friend not in nodeofflags: nodeofflags[friend] = ["True", "True"]
+
         if nodeofflags[friend][0] == True:
           node2node[friend]["friend"] = friend2friend
           nodeofflags[friend][0] = False
@@ -169,6 +173,8 @@ if __name__ == "__main__":
       for i in ans_follower: node2node[user]["follower2follower"].append([follower, i])
   
       if (follower in seeds + match):
+        
+        if follower not in nodeofflags: nodeofflags[follower] = ["True", "True"]
         
         if nodeofflags[follower][0] == True:
           node2node[follower]["friend"] = follower2friend
@@ -193,6 +199,7 @@ if __name__ == "__main__":
     print("friend : {0}\nfollower : {1}\nfriend2friend : {2}\nfriend2follower : {3}\n follower2friend : {4}\nfollower2follower : {5}\n".format(len(node2node[user]["friend"]),len(node2node[user]["follower"]),len(node2node[user]["friend2friend"]), len(node2node[user]["friend2follower"]), len(node2node[user]["follower2friend"]), len(node2node[user]["follower2follower"])))
 
     with open("../query/analysis/" + queryID + "_node2node.pickle", mode='wb') as p:
+      print("save pickle : {0}".format(len(node2node)))
       pickle.dump(node2node, p)
 
   gpaph_count = [0] * 39

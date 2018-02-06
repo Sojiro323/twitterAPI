@@ -4,6 +4,7 @@ import sys
 import time
 import datetime
 import json
+from time import sleep
 path_pattern = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39"]
 
 
@@ -154,19 +155,19 @@ def update(goal, userID):
   if goal == 'all':
     if flag == '***':
       friends = use_API(userID, 'friends')
-      if friends is not None: Server_Mydatabase.update(checked_list, (userID, 'friends_onlynv', userID))
+      if friends is not None: Server_Mydatabase.update("checked_list", ('friends_only', userID))
       followers = use_API(userID, 'followers')
-      if followers is not None: Server_Mydatabase.update(checked_list, (userID, 'all', userID))
+      if followers is not None: Server_Mydatabase.update("checked_list", ('all', userID))
     elif flag == 'followers_only':
       friends = use_API(userID, 'friends')
       followers = Server_Mydatabase.select('select userID from follow_graph where followerID = \'' + userID + '\'')
       followers = tuple2list(followers)
-      if followers is not None: Server_Mydatabase.update(checked_list, (userID, 'all', userID))
+      if followers is not None: Server_Mydatabase.update("checked_list", ('all', userID))
     elif flag == 'friends_only':
       followers == use_API(userID, 'followers')
       friends = Server_Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
       friends = tuple2list(friends)
-      if friends is not None: Server_Mydatabase.update(checked_list, (userID, 'all', userID))
+      if friends is not None: Server_Mydatabase.update("checked_list", ('all', userID))
     elif flag == "all":
       friends = Server_Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
       friends = tuple2list(friends)
@@ -179,10 +180,10 @@ def update(goal, userID):
   elif goal == 'friends_only':
     if flag == 'followers_only':
       friends = use_API(userID, 'friends')
-      if friends is not None: Server_Mydatabase.update('checked_list', (userID, 'all', userID))
+      if friends is not None: Server_Mydatabase.update('checked_list', ('all', userID))
     elif flag == '***':
       friends = use_API(userID, 'friends')
-      if friends is not None: Server_Mydatabase.update('checked_list', (userID, 'friends_only', userID))
+      if friends is not None: Server_Mydatabase.update('checked_list', ('friends_only', userID))
     elif flag == 'friends_only' or flag == 'all':
       friends = Server_Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
       friends = tuple2list(friends)
@@ -193,10 +194,10 @@ def update(goal, userID):
   elif goal == 'followers_only':
     if flag == 'friends_only':
       followers = use_API(userID, 'followers')
-      if followers is not None: Server_Mydatabase.update('checked_list', (userID, 'all', userID))
+      if followers is not None: Server_Mydatabase.update('checked_list', ('all', userID))
     elif flag == '***':
       followers = use_API(userID, 'followers')
-      if followers is not None: Server_Mydatabase.update('checked_list', (userID, 'followers_only', userID))
+      if followers is not None: Server_Mydatabase.update('checked_list', ('followers_only', userID))
     elif flag == 'followers_only' or flag == 'all':
       followers = Server_Mydatabase.select('select userID from follow_graph where followerID = \'' + userID + '\'')
       followers = tuple2list(followers)
@@ -207,20 +208,17 @@ def update(goal, userID):
 
 def use_API(userID, api):
 
-  print("start API : {0}".format(userID))
   values = []
   if api == 'friends':
     return_list = acsessAPI(userID, 'friends')
     if return_list is None: return None
-    for friend in return_list:
-      values.append((userID, friend))
+    for friend in return_list: values.append((userID, friend))
     Server_Mydatabase.insert("follow_graph", values)
 
   else:
     return_list = acsessAPI(userID, 'followers')
     if return_list is None: return None
-    for follower in return_list:
-      values.append((follower, userID))
+    for follower in return_list: values.append((follower, userID))
     Server_Mydatabase.insert("follow_graph", values)
 
   return return_list
@@ -230,29 +228,8 @@ def acsessAPI(userID, api):
 
     return_list = []
 
-    tmp = Server_Mydatabase.select('select limited, last_use from api_limit where api_name = \'' + api + '\'')
-    limit = tmp[0][0]
-    last_use = tmp[0][1]
-    last_time = datetime.datetime(int(last_use[0:4]),int(last_use[5:7]),int(last_use[8:10]),int(last_use[11:13]),int(last_use[14:16]),int(last_use[17:19]))
-
-    print("limit last_use last_time : {0} {1} {2}".format(limit, last_use, last_time))
-    now = time.strftime('%Y-%m-%d %H:%M:%S')
-    now_time = datetime.datetime(int(now[0:4]),int(now[5:7]),int(now[8:10]),int(now[11:13]),int(now[14:16]),int(now[17:19]))
-    delta = now_time - last_time
-    print("delta {0}".format(delta))
-
-    if limit == 0:
-      print("start sleep")
-      while(delta.total_seconds() < 900):
-        now_time = datetime.datetime(int(now[0:4]),int(now[5:7]),int(now[8:10]),int(now[11:13]),int(now[14:16]),int(now[17:19]))
-        delta = now_time - last_time
-
     if api == "followers":responce = MytwitterAPI.followers(userID)
     else:responce = MytwitterAPI.friends(userID)
-
-
-    limit = int(responce.headers['x-rate-limit-remaining']) if 'x-rate-limit-remaining' in responce.headers else 0
-    Server_Mydatabase.update('api_limit', (api, limit, now, api))
 
     if responce.status_code != 200:
       print("{0} : Error code: {1}".format(userID, responce.status_code))
@@ -260,15 +237,13 @@ def acsessAPI(userID, api):
         Server_Mydatabase.update('checked_list', ('protected', userID))
       elif responce.status_code == 404:
         Server_Mydatabase.update('checked_list', ('NotFound', userID))
-    return None
-
-
+      return None
 
     IDs = json.loads(responce.text)
     for ID in IDs['ids']:
         return_list.append(ID)
 
-    print('{0} \'s return list : \n {1}'.format(userID, return_list))
+    print('{0} \'s return list : \n {1}'.format(userID, len(return_list)))
     return return_list
 
 

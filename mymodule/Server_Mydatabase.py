@@ -77,7 +77,7 @@ def update(database, values):
       if database == 'checked_list':
         c.execute('UPDATE checked_list SET state = \'' + values[0] +'\' WHERE userID= \'' + values[1] + '\'')
       elif database == 'api_limit':
-        c.execute('UPDATE api_limit SET limited = \'' + values[0] +'\', last_use = \'' + values[1] + '\' WHERE api_name = \'' + values[2] + '\'')
+        c.execute('UPDATE api_limit SET limited = \'' + values[1] +'\', last_use = \'' + values[2] + '\' WHERE api_name = \'' + values[3] + '\' and id = \'' + values[0] + '\'')
       # データベースへの変更を保存
       conn.commit()
 
