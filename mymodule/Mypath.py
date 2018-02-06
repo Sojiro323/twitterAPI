@@ -1,4 +1,4 @@
-from mymodule import Mydatabase
+from mymodule import Server_Mydatabase
 from mymodule import MytwitterAPI
 import sys
 import time
@@ -187,28 +187,28 @@ def update(goal, userID):
 
   friends = []
   followers = []
-  flag = Mydatabase.check(userID)
+  flag = Server_Mydatabase.check(userID)
 
   if goal == 'all':
     if flag == '***':
       friends = use_API(userID, 'friends')
-      if friends is not None: Mydatabase.update(checked_list, (userID, 'friends_onlynv', userID))
+      if friends is not None: Server_Mydatabase.update(checked_list, (userID, 'friends_onlynv', userID))
       followers = use_API(userID, 'followers')
-      if followers is not None: Mydatabase.update(checked_list, (userID, 'all', userID))
+      if followers is not None: Server_Mydatabase.update(checked_list, (userID, 'all', userID))
     elif flag == 'followers_only':
       friends = use_API(userID, 'friends')
-      followers = Mydatabase.select('select userID from follow_graph where followerID = \'' + userID + '\'')
+      followers = Server_Mydatabase.select('select userID from follow_graph where followerID = \'' + userID + '\'')
       followers = tuple2list(followers)
-      if followers is not None: Mydatabase.update(checked_list, (userID, 'all', userID))
+      if followers is not None: Server_Mydatabase.update(checked_list, (userID, 'all', userID))
     elif flag == 'friends_only':
       followers == use_API(userID, 'followers')
-      friends = Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
+      friends = Server_Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
       friends = tuple2list(friends)
-      if friends is not None: Mydatabase.update(checked_list, (userID, 'all', userID))
+      if friends is not None: Server_Mydatabase.update(checked_list, (userID, 'all', userID))
     elif flag == "all":
-      friends = Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
+      friends = Server_Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
       friends = tuple2list(friends)
-      followers = Mydatabase.select('select userID from follow_graph where followerID = \'' + userID + '\'')
+      followers = Server_Mydatabase.select('select userID from follow_graph where followerID = \'' + userID + '\'')
       followers = tuple2list(followers)
 
     if friends is None or followers is None: return [], []
@@ -217,12 +217,12 @@ def update(goal, userID):
   elif goal == 'friends_only':
     if flag == 'followers_only':
       friends = use_API(userID, 'friends')
-      if friends is not None: Mydatabase.update('checked_list', (userID, 'all', userID))
+      if friends is not None: Server_Mydatabase.update('checked_list', (userID, 'all', userID))
     elif flag == '***':
       friends = use_API(userID, 'friends')
-      if friends is not None: Mydatabase.update('checked_list', (userID, 'friends_only', userID))
+      if friends is not None: Server_Mydatabase.update('checked_list', (userID, 'friends_only', userID))
     elif flag == 'friends_only' or flag == 'all':
-      friends = Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
+      friends = Server_Mydatabase.select('select followerID from follow_graph where userID = \'' + userID + '\'')
       friends = tuple2list(friends)
 
     if friends is None: return []
@@ -231,12 +231,12 @@ def update(goal, userID):
   elif goal == 'followers_only':
     if flag == 'friends_only':
       followers = use_API(userID, 'followers')
-      if followers is not None: Mydatabase.update('checked_list', (userID, 'all', userID))
+      if followers is not None: Server_Mydatabase.update('checked_list', (userID, 'all', userID))
     elif flag == '***':
       followers = use_API(userID, 'followers')
-      if followers is not None: Mydatabase.update('checked_list', (userID, 'followers_only', userID))
+      if followers is not None: Server_Mydatabase.update('checked_list', (userID, 'followers_only', userID))
     elif flag == 'followers_only' or flag == 'all':
-      followers = Mydatabase.select('select userID from follow_graph where followerID = \'' + userID + '\'')
+      followers = Server_Mydatabase.select('select userID from follow_graph where followerID = \'' + userID + '\'')
       followers = tuple2list(followers)
 
     if followers is None: return []
@@ -252,14 +252,14 @@ def use_API(userID, api):
     if return_list is None: return None
     for friend in return_list:
       values.append((userID, friend))
-    Mydatabase.insert("follow_graph", values)
+    Server_Mydatabase.insert("follow_graph", values)
 
   else:
     return_list = acsessAPI(userID, 'followers')
     if return_list is None: return None
     for follower in return_list:
       values.append((follower, userID))
-    Mydatabase.insert("follow_graph", values)
+    Server_Mydatabase.insert("follow_graph", values)
 
   return return_list
 
@@ -268,7 +268,7 @@ def acsessAPI(userID, api):
 
     return_list = []
 
-    tmp = Mydatabase.select('select limited, last_use from api_limit where api_name = \'' + api + '\'')
+    tmp = Server_Mydatabase.select('select limited, last_use from api_limit where api_name = \'' + api + '\'')
     limit = tmp[0][0]
     last_use = tmp[0][1]
     last_time = datetime.datetime(int(last_use[0:4]),int(last_use[5:7]),int(last_use[8:10]),int(last_use[11:13]),int(last_use[14:16]),int(last_use[17:19]))
@@ -288,14 +288,14 @@ def acsessAPI(userID, api):
 
 
     limit = int(responce.headers['x-rate-limit-remaining']) if 'x-rate-limit-remaining' in responce.headers else 0
-    Mydatabase.update('api_limit', (api, limit, now, api))
+    Server_Mydatabase.update('api_limit', (api, limit, now, api))
 
     if responce.status_code != 200:
       print("{0} : Error code: {2}".format(userID, responce.status_code))
       if responce.status_code == 401:
-        Mydatabase.update('checked_list', (userID, 'protected', userID))
+        Server_Mydatabase.update('checked_list', (userID, 'protected', userID))
       elif responce.status_code == 404:
-        Mydatabase.update('checked_list', (userID, 'NotFound', userID))
+        Server_Mydatabase.update('checked_list', (userID, 'NotFound', userID))
     return None
 
 

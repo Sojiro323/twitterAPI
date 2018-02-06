@@ -48,56 +48,39 @@ path_com = {
 39:[1,2,3,4,5,6]
 }
 
-def check(2node):
 
-  for v in 2node:  
+
+def check(node):
+
+  for v in node:  
     if len(v) != 0: return True
   return False
 
 
 
-def set_check(2node, opponent, p_dic, path_set):
+def set_check(node, opponent, p_dic, path_set):
 
   SET = []
   users = {}
   
-  for k, v in 2node.items():
+  for k, v in node.items():
     if k == "friend" or k == "follower": continue
-      for i, u in enumerate(v[:]):
-        if u[1] == opponent:
-          if u[0] not in users: users[u[0]] = []
-            users[u[0]].append(p_dic[k])
-            v.pop(i)
+    for i, u in enumerate(v[:]):
+      if u[1] == opponent:
+        if u[0] not in users: users[u[0]] = []
+        users[u[0]].append(p_dic[k])
+        v.pop(i)
 
   for user in users: SET.append(path_set + user)
 
-  return 2node, SET
+  return node, SET
 
-
-      opponent = v.pop(0)
-      count[p_dic[k]] += 1
-      break
-
-      for k,v in 2node.items():
-        count[p_dic[k]] += v.count(opponent)
-        2node[k] = list(set[v] - set([opponent])))
-
-      
-      ts = [k for k in count.keys() if count[k] != 0]
-      j = 1
-      for t in ts:
-        if t >= 3: j *= count[t]
-
-      for i, p in p_com.items():
-      
-        if len(set(p) - set(ts)) == 0:
-          graph_count[i-1] += j
 
 
 if __name__ == "__main__":
 
   while(1):
-    print("input queryID")i
+    print("input queryID")
     
     queryID = input('>>> ')
 
@@ -105,7 +88,8 @@ if __name__ == "__main__":
     else: print("\ninput again!!\n\n")
 
   SQL_seeds = Server_Mydatabase.select("SELECT userID from query where queryID = \'" + queryID + "\'" + "and ID = \'0\'")
-  SQL_match = Server_Mydatabase.select("SELECT userID from query where queryID = \'%" + queryID + "%\'" + "and result =  \'2\'")
+  SQL_match = Server_Mydatabase.select("SELECT userID from query where queryID LIKE \'%" + queryID + "%\'" + "and result =  \'2\'")
+
 
   seeds = [s[0] for s in SQL_seeds]
   match = list(set([s[0] for s in SQL_match]))
@@ -114,12 +98,14 @@ if __name__ == "__main__":
   nodeofflags = {}
   for u in seeds + match:
     node2node[u] = {}
-    nodeofflags[u] = [True, True, True, True, True, True] 
+    nodeofflags[u] = [True, True] 
 
   print("seeds : {0}".format(seeds))
   print("match : {0}".format(match))
 
   for user in seeds + match:
+
+    print("user : {0} start".format(user))
 
     if nodeofflags[user][0] and nodeofflags[user][1]:
       friends, followers = Mypath.update("all", user)
@@ -141,7 +127,7 @@ if __name__ == "__main__":
       nodeofflags[user][0] = False
       followers = node2node[user]["follower"]
 
-
+    print("friend follower finish : {0} {1}".format(len(friends),len(follower)))
 
     for friend in friends:
       friend2friend, friend2follower = Mypath.update("all", friend)
@@ -151,21 +137,22 @@ if __name__ == "__main__":
       node2node[user]["friend2follower"] = []
       for i in ans_friend: node2node[user]["friend2friend"].append([friend, i])
       for i in ans_follower: node2node[user]["friend2follower"].append([friend, i])
-      nodeofflags[user][2] = False
-      nodeofflags[user][3] = False
   
-      if (friend in seed + match):
+      if (friend in seeds + match):
         
-        if nodeofflags[friend][0] = True:
+        if nodeofflags[friend][0] == True:
           node2node[friend]["friend"] = friend2friend
           nodeofflags[friend][0] = False
         
-        if nodeofflags[friend][1] = True:
-        node2node[friend]["follower"] = friend2follower
-        nodeofflags[friend][1] = False
+        if nodeofflags[friend][1] == True:
+          node2node[friend]["follower"] = friend2follower
+          nodeofflags[friend][1] = False
  
+      
+    print("friends finish : {0} {1}".format(len(friend2friend),len(friend2follower)))
+
  
-    for follower in followers
+    for follower in followers:
       follower2friend, follower2follower = Mypath.update("all", follower)
       ans_friend = list((set(follower2friend) & set(seeds + match)) - set([user]))
       ans_follower = list((set(follower2follower) & set(seeds + match)) - set([user]))
@@ -173,19 +160,19 @@ if __name__ == "__main__":
       node2node[user]["follower2follower"] = []
       for i in ans_friend: node2node[user]["follower2friend"].append([follower, i])
       for i in ans_follower: node2node[user]["follower2follower"].append([follower, i])
-      nodeofflags[user][4] = False
-      nodeofflags[user][5] = False
   
-      if (follower in seed + match):
+      if (follower in seeds + match):
         
-        if nodeofflags[follower][0] = True:
+        if nodeofflags[follower][0] == True:
           node2node[follower]["friend"] = follower2friend
           nodeofflags[follower][0] = False
         
-        if nodeofflags[follower][1] = True:
-        node2node[follower]["follower"] = follower2follower
-        nodeofflags[follower][1] = False
+        if nodeofflags[follower][1] == True:
+          node2node[follower]["follower"] = follower2follower
+          nodeofflags[follower][1] = False
   
+    print("followers finish : {0} {1}".format(len(follower2friend),len(follower2follower)))
+    
     
     ans_friend = list((set(friend) & set(seeds + match)) - set([user]))
     ans_follower = list((set(follower) & set(seeds + match)) - set([user]))
@@ -194,51 +181,57 @@ if __name__ == "__main__":
     for i in ans_friend: node2node[user]["friend"].append(i)
     for i in ans_follower: node2node[user]["follower"].append(i)
 
+    print("friend : {0}\nfollower : {1}\nfriend2friend : {2}\nfriend2follower : {3}\n follower2friend : {4}\nfollower2follwoer{5}".format(node2node[user]["friend"],node2node[user]["follower"],node2node[user]["friend2friend"], node2node[user]["friend2follower"], node2node[user]["follower2friend"], node2node[user]["follower2follower"]))
+
   Mypickle.save("../query/", node2node)
 
-  print("test")
-  for node in node2node:
-    print(node)
-    break
-
   gpaph_count = [0] * 39
-  p_dic = ["friend":1, "follower":2, "friend2follower":3, "follower2friend":4, "friend2follower":5, "follower2follower":6] 
+  p_dic = {"friend":1, "follower":2, "friend2follower":3, "follower2friend":4, "friend2follower":5, "follower2follower":6}
 
   for user in (seeds + match):
 
-    2node = node2node[user] #dic
+    node = node2node[user] #dic
     path_set = []
 
-    while(check(2node)):
+    while(check(node)):
 
-      while(len(2node["friend"]) != 0 or len(2node["follower"]) != 0):
+      while(len(node["friend"]) != 0 or len(node["follower"]) != 0):
 
-        if len(2node["friend"]) != 0:
-          opponent = 2node["friend"].pop(0)
+        if len(node["friend"]) != 0:
+          opponent = node["friend"].pop(0)
           path_set.append(1)
-          if opponent in 2node["follower"]:
+          if opponent in node["follower"]:
             path_set.append(2)
-            2node["follower"].pop(2node["follower"].index(opponent))
+            node["follower"].pop(node["follower"].index(opponent))
         else: 
-          opponent = 2node["follower"].pop(0)
+          opponent = node["follower"].pop(0)
           path_set.append(2)
 
-        2node, path_set = set_check(2node, opponent, p_dic, path_set)
-  
+        node, path_set = set_check(node, opponent, p_dic, path_set)
+        print("1 or 2 in set : {0}".format(path_set))
+        print("graph_count old : {0}".format(graph_count))
+
         for p in path_set:
           for k, com in p_com.items():
             if len(list(set(com) - set(p))) == 0:
               gpaph_count[k-1] += 1
 
-      for k, v in 2node:
+        print("graph_count now : {0}".format(graph_count))
+
+      for k, v in node:
         if len(v) != 0:
           opponent = v[1]
           break
 
-      2node, path_set = set_check(2node, opponent, p_dic, [])
+      node, path_set = set_check(node, opponent, p_dic, [])
+      print("1 or 2 not in set : {0}".format(path_set))
+      print("graph_count old : {0}".format(graph_count))
+
       for p in path_set:
         for k, com in p_com.items():
           if len(list(set(com) - set(p))) == 0:
             gpaph_count[k-1] += 1
+      
+      print("graph_count now : {0}".format(graph_count))
 
   Mypickle.save("../query/", graphcount)
