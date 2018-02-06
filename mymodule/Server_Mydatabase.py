@@ -96,6 +96,7 @@ def insert(database, values):
       if database == "follow_graph": sql = 'INSERT ignore into follow_graph values (%s, %s)'
       elif database == 'checked_list': sql = 'INSERT ignore into checked_list values (%s, %s, %s, %s, %s)'
       elif database == 'query': sql = 'INSERT ignore into query values (%s, %s, %s, %s)'
+      elif database == 'api_limit': sql = 'INSERT into api_limit values (%s, %s, %s, %s)'
       else: sql = 'INSERT ignore into result values (%s, %s, %s)'
       if isinstance(values,tuple): c.execute(sql, values)  # 1件のみ
       else: c.executemany(sql, values)    # 複数件

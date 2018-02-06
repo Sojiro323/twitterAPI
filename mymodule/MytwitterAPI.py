@@ -2,6 +2,7 @@ from requests_oauthlib import OAuth1Session
 from requests.exceptions import ConnectionError
 from mymodule import Mypickle
 from mymodule import Server_Mydatabase
+import os
 import datetime
 import time
 import yaml
@@ -183,15 +184,16 @@ def join_params(params_list,*,count = 0):
     return return_list
 
 def limit2database():
-    MAX = Server_Mydatabase.select("select MAX(id) from api_limit")[0]
+    MAX = Server_Mydatabase.select("select MAX(id) from api_limit")[0][0]
     keys = os.listdir('../password/twitterAPI/')
     
     f = open('../password/API_database.yml', 'r+')
     api_names = yaml.load(f)['api_name']
 
     for key in keys:
-      if key not in 'yml': continue
-      if int(keys.split('.')[0]) > int(MAX):
+      if 'yml' not in key: continue
+      ID = key.split(".")[0]
+      if int(ID) > MAX:
         for api_name in api_names:
-          Server_Mydatabase.select("insert into api_limit values (\'" + str(keys) + "\',\'" + api_name + "\',0,'2018-01-01 00:00:00')")
+          Server_Mydatabase.insert("api_limit", (ID,api_name,0,'2018-01-01 00:00:00'))
 
