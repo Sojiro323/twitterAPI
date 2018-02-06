@@ -2,14 +2,14 @@ from requests_oauthlib import OAuth1Session
 from requests.exceptions import ConnectionError
 from mymodule import Mypickle
 from mymodule import Server_Mydatabase
-import yaml
+import datetime
 import time
-import time from sleep
+import yaml
 
 ### Constants
 
 
-def create_oath_session():
+def create_oath_session(api_name):
 
     ID = limit_check(api_name)
 
@@ -33,7 +33,7 @@ def show(user_ID):
     oath, ID = create_oath_session("show")
     try:
         responce = oath.get(url, params = params)
-        insert2database(ID, responce)
+        insert2database(ID, "show", responce)
     except ConnectionError as e:
         return show(user_ID)
     return responce
@@ -48,7 +48,7 @@ def lookup(users_ID):
     oath, ID = create_oath_session("lookup")
     try:
         responce = oath.post(url, params = params)
-        insert2database(ID, responce)
+        insert2database(ID, "lookup", responce)
     except ConnectionError as e:
         return lookup(users_ID)
     return responce
@@ -66,7 +66,7 @@ def followers(userID):
     try:
         responce = oath.get(url, params = params)
         #responce = oath.post(url, params = params)
-        insert2database(ID, responce)
+        insert2database(ID, "followers", responce)
     except ConnectionError as e:
         return followers(userID)
     return responce
@@ -82,7 +82,7 @@ def friends(userID):
     try:
         responce = oath.get(url, params = params)
         #responce = oath.post(url, params = params)
-        insert2database(ID, responce)
+        insert2database(ID, "friends", responce)
     except ConnectionError as e:
         return friends(userID)
     return responce
@@ -99,7 +99,7 @@ def tweets(keyword, count):
     oath, ID = create_oath_session("tweets")
     try:
         responce = oath.get(url, params = params)
-        insert2database(ID, responce)
+        insert2database(ID, "tweets", responce)
     except ConnectionError as e:
         return tweet(userID)
     return responce
@@ -115,16 +115,16 @@ def users(keyword, page, count):
     oath, ID = create_oath_session("users")
     try:
         responce = oath.get(url, params = params)
-        insert2database(ID, responce)
+        insert2database(ID, "users", responce)
     except ConnectionError as e:
         return tweet(userID)
     return responce
 
 
-def insert2database(ID, responce):
+def insert2database(ID, api_name, responce):
     limit = responce.headers['x-rate-limit-remaining'] if 'x-rate-limit-remaining' in responce.headers else 0
     now = time.strftime('%Y-%m-%d %H:%M:%S')
-    Server_Mydatabase.update('api_limit', ((ID, str(limit), now, api)))
+    Server_Mydatabase.update('api_limit', ((ID, str(limit), now, api_name)))
 
 
 def limit_check(api_name):
@@ -141,13 +141,13 @@ def limit_check(api_name):
         last_use = SQL[2]
         last_time = datetime.datetime(int(last_use[0:4]),int(last_use[5:7]),int(last_use[8:10]),int(last_use[11:13]),int(last_use[14:16]),int(last_use[17:19]))
         delta = now_time - last_time
-        if int(limited) > 0 or delta.total_seconds() > 900:
+        if int(limit) > 0 or delta.total_seconds() > 900:
             ID = SQL[0]
             break
 
-    if ID = "":
+    if ID == "":
         print("start sleep")
-        sleep(900)
+        time.sleep(900)
         ID = 1
 
     return ID
@@ -181,3 +181,17 @@ def join_params(params_list,*,count = 0):
     if return_list[-1] == "": return_list.pop()
 
     return return_list
+
+def limit2database():
+    MAX = Server_Mydatabase.select("select MAX(id) from api_limit")[0]
+    keys = os.listdir('../password/twitterAPI/')
+    
+    f = open('../password/API_database.yml', 'r+')
+    api_names = yaml.load(f)['api_name']
+
+    for key in keys:
+      if key not in 'yml': continue
+      if int(keys.split('.')[0]) > int(MAX):
+        for api_name in api_names:
+          Server_Mydatabase.select("insert into api_limit values (\'" + str(keys) + "\',\'" + api_name + "\',0,'2018-01-01 00:00:00')")
+
