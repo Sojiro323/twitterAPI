@@ -79,8 +79,16 @@ def recommendation(pattern, seeds, seeds_score):
   else:
     match_list = ranking(pattern, match_list, match_seeds, seeds_score)
     match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
-    seeds = seeds + match_users
+
+    while(pattern == next_pattern):
+      add_match_list, add_match_seeds = Mypath.get_match(pattern, match_users)
+      match_seeds = Mypath.join_dic([match_seeds, add_match_seeds])
+      match_list = list(set(match_list) & set(add_match_list))
+      match_list = ranking(pattern, match_list, match_seeds, seeds_score)
+      match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
+
     print("now seeds : {0}".format(seeds))
+    seeds = seeds + match_users
 
   return next_pattern, seeds, seeds_score
 

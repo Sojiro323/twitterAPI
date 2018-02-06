@@ -2,6 +2,7 @@
 from mymodule import Mypickle
 from mymodule import Mypath
 from mymodule import Server_Mydatabase
+import pickle
 import os
 import sys
 
@@ -96,6 +97,11 @@ if __name__ == "__main__":
 
   node2node = {} #{userID:{friend:...,follower:...,friend2friend:...,friend2follower:...,follower2friend:...,follower2follower:...,}}
   nodeofflags = {}
+  
+  path = "../query/analysis/"
+  doc_name = queryID + "_node2node" 
+  if os.path.exists(path + doc_name): node2node = Mypickle.load(path, doc_name)
+  
   for u in seeds + match:
     node2node[u] = {}
     nodeofflags[u] = [True, True] 
@@ -105,7 +111,7 @@ if __name__ == "__main__":
 
   for user in seeds + match:
 
-    print("user : {0} start".format(user))
+    print("\nuser : {0} start".format(user))
 
     if nodeofflags[user][0] and nodeofflags[user][1]:
       friends, followers = Mypath.update("all", user)
@@ -127,14 +133,15 @@ if __name__ == "__main__":
       nodeofflags[user][0] = False
       followers = node2node[user]["follower"]
 
-    print("friend follower finish : {0} {1}".format(len(friends),len(follower)))
+    print("friend follower finish")
+      
+    node2node[user]["friend2friend"] = []
+    node2node[user]["friend2follower"] = []
 
     for friend in friends:
       friend2friend, friend2follower = Mypath.update("all", friend)
       ans_friend = list((set(friend2friend) & set(seeds + match)) - set([user]))
       ans_follower = list((set(friend2follower) & set(seeds + match)) - set([user]))
-      node2node[user]["friend2friend"] = []
-      node2node[user]["friend2follower"] = []
       for i in ans_friend: node2node[user]["friend2friend"].append([friend, i])
       for i in ans_follower: node2node[user]["friend2follower"].append([friend, i])
   
@@ -149,15 +156,15 @@ if __name__ == "__main__":
           nodeofflags[friend][1] = False
  
       
-    print("friends finish : {0} {1}".format(len(friend2friend),len(friend2follower)))
+    print("friends finish")
 
+    node2node[user]["follower2friend"] = []
+    node2node[user]["follower2follower"] = []
  
     for follower in followers:
       follower2friend, follower2follower = Mypath.update("all", follower)
       ans_friend = list((set(follower2friend) & set(seeds + match)) - set([user]))
       ans_follower = list((set(follower2follower) & set(seeds + match)) - set([user]))
-      node2node[user]["follower2friend"] = []
-      node2node[user]["follower2follower"] = []
       for i in ans_friend: node2node[user]["follower2friend"].append([follower, i])
       for i in ans_follower: node2node[user]["follower2follower"].append([follower, i])
   
@@ -171,19 +178,22 @@ if __name__ == "__main__":
           node2node[follower]["follower"] = follower2follower
           nodeofflags[follower][1] = False
   
-    print("followers finish : {0} {1}".format(len(follower2friend),len(follower2follower)))
+    print("followers finish")
     
     
-    ans_friend = list((set(friend) & set(seeds + match)) - set([user]))
-    ans_follower = list((set(follower) & set(seeds + match)) - set([user]))
+    ans_friend = list((set(friends) & set(seeds + match)) - set([user]))
+    ans_follower = list((set(followers) & set(seeds + match)) - set([user]))
     node2node[user]["friend"] = []
     node2node[user]["follower"] = []
     for i in ans_friend: node2node[user]["friend"].append(i)
     for i in ans_follower: node2node[user]["follower"].append(i)
+    print(ans_friend)
+    print(ans_follower)
 
-    print("friend : {0}\nfollower : {1}\nfriend2friend : {2}\nfriend2follower : {3}\n follower2friend : {4}\nfollower2follwoer{5}".format(node2node[user]["friend"],node2node[user]["follower"],node2node[user]["friend2friend"], node2node[user]["friend2follower"], node2node[user]["follower2friend"], node2node[user]["follower2follower"]))
+    print("friend : {0}\nfollower : {1}\nfriend2friend : {2}\nfriend2follower : {3}\n follower2friend : {4}\nfollower2follower : {5}\n".format(len(node2node[user]["friend"]),len(node2node[user]["follower"]),len(node2node[user]["friend2friend"]), len(node2node[user]["friend2follower"]), len(node2node[user]["follower2friend"]), len(node2node[user]["follower2follower"])))
 
-  Mypickle.save("../query/", node2node)
+    with open("../query/analysis/" + queryID + "_node2node.pickle", mode='wb') as p:
+      pickle.dump(node2node, p)
 
   gpaph_count = [0] * 39
   p_dic = {"friend":1, "follower":2, "friend2follower":3, "follower2friend":4, "friend2follower":5, "follower2follower":6}
@@ -234,4 +244,5 @@ if __name__ == "__main__":
       
       print("graph_count now : {0}".format(graph_count))
 
-  Mypickle.save("../query/", graphcount)
+  with open("../query/analysis/" + queryID + "_graph_count.pickle", mode='wb') as p:
+    pickle.dump(graph_count, p)

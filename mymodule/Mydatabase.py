@@ -105,9 +105,9 @@ def update(database, values):
       # レコードの更新
 
       if database == 'checked_list':
-        c.execute('INSERT INTO checked_list (userID, state) VALUES (%s,%s) ON DUPLICATE KEY UPDATE userID=%s',values)
+        c.execute('UPDATE checked_list SET state = \'' + values[0] +'\' WHERE userID= \'' + values[1] + '\'')
       elif database == 'api_limit':
-        c.execute('INSERT INTO api_limit (api_name, limited, last_use) VALUES (%s,%s,%s) ON DUPLICATE KEY UPDATE api_name=%s',values)
+        c.execute('UPDATE api_limit SET limited = \'' + values[0] +'\', last_use = \'' + values[1] + '\' WHERE api_name = \'' + values[2] + '\'')
       # データベースへの変更を保存
       conn.commit()
 

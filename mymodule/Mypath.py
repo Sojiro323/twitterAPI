@@ -12,139 +12,105 @@ def get_match(pattern, seeds):
 
   if pattern is path_pattern[0]:#friend
     match_list, match_seeds = basic_pass1(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[1]:#follower
     match_list, match_seeds = basic_pass2(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[2]:#com_friend
     match_list, match_seeds = basic_pass3(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[3]:#com_follower
     match_list, match_seeds = basic_pass4(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[4]:#friend_friend
     match_list, match_seeds = basic_pass5(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[5]:#follower_follower
     match_list, match_seeds = basic_pass6(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[6]:#mutual
     match_list, match_seeds = basic_pass7(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[7]:#8
     match_list, match_seeds = basic_pass8(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[8]:#9
     match_list, match_seeds = basic_pass9(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[9]:#10
     match_list, match_seeds = basic_pass10(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[10]:#11
     match_list, match_seeds = basic_pass11(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[11]:#12
     match_list, match_seeds = basic_pass12(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[12]:#13
     match_list, match_seeds = basic_pass13(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[13]:#14
     match_list, match_seeds = basic_pass14(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[14]:#15
     match_list, match_seeds = basic_pass15(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[15]:#16
     match_list, match_seeds = basic_pass16(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[16]:#17
     match_list, match_seeds = basic_pass17(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[17]:#18
     match_list, match_seeds = basic_pass18(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[18]:#19
     match_list, match_seeds = basic_pass19(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[19]:#20
     match_list, match_seeds = basic_pass20(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[20]:#21
     match_list, match_seeds = basic_pass21(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[21]:#22
     match_list, match_seeds = basic_pass22(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[22]:#23
     match_list, match_seeds = basic_pass23(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[23]:#24
     match_list, match_seeds = basic_pass24(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[24]:#25
     match_list, match_seeds = basic_pass25(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[25]:#26
     match_list, match_seeds = basic_pass26(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[26]:#27
     match_list, match_seeds = basic_pass27(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[27]:#28
     match_list, match_seeds = basic_pass28(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[28]:#29
     match_list, match_seeds = basic_pass29(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[29]:#30
     match_list, match_seeds = basic_pass30(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[30]:#31
     match_list, match_seeds = basic_pass31(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[31]:#32
     match_list, match_seeds = basic_pass32(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[32]:#33
     match_list, match_seeds = basic_pass33(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[33]:#34
     match_list, match_seeds = basic_pass34(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[34]:#35
     match_list, match_seeds = basic_pass35(seeds)
@@ -152,19 +118,15 @@ def get_match(pattern, seeds):
 
   elif pattern is path_pattern[35]:#36
     match_list, match_seeds = basic_pass36(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[36]:#37
     match_list, match_seeds = basic_pass37(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[37]:#38
     match_list, match_seeds = basic_pass38(seeds)
-    match_seeds = join_dic([match_seeds])
 
   elif pattern is path_pattern[38]:#39
     match_list, match_seeds = basic_pass39(seeds)
-    match_seeds = join_dic([match_seeds])
 
   else:
     print("key error : {0}".format(pattern))
@@ -273,9 +235,11 @@ def acsessAPI(userID, api):
     last_use = tmp[0][1]
     last_time = datetime.datetime(int(last_use[0:4]),int(last_use[5:7]),int(last_use[8:10]),int(last_use[11:13]),int(last_use[14:16]),int(last_use[17:19]))
 
+    print("limit last_use last_time : {0} {1} {2}".format(limit, last_use, last_time))
     now = time.strftime('%Y-%m-%d %H:%M:%S')
     now_time = datetime.datetime(int(now[0:4]),int(now[5:7]),int(now[8:10]),int(now[11:13]),int(now[14:16]),int(now[17:19]))
     delta = now_time - last_time
+    print("delta {0}".format(delta))
 
     if limit == 0:
       print("start sleep")
@@ -291,11 +255,11 @@ def acsessAPI(userID, api):
     Server_Mydatabase.update('api_limit', (api, limit, now, api))
 
     if responce.status_code != 200:
-      print("{0} : Error code: {2}".format(userID, responce.status_code))
+      print("{0} : Error code: {1}".format(userID, responce.status_code))
       if responce.status_code == 401:
-        Server_Mydatabase.update('checked_list', (userID, 'protected', userID))
+        Server_Mydatabase.update('checked_list', ('protected', userID))
       elif responce.status_code == 404:
-        Server_Mydatabase.update('checked_list', (userID, 'NotFound', userID))
+        Server_Mydatabase.update('checked_list', ('NotFound', userID))
     return None
 
 
