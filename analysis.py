@@ -50,11 +50,49 @@ path_com = {
 
 def check(2node):
 
-  for v in 2node:
-    
+  for v in 2node:  
     if len(v) != 0: return True
-
   return False
+
+
+
+def set_check(2node, opponent, p_dic, path_set):
+
+  SET = []
+  users = {}
+  
+  for k, v in 2node.items():
+    if k == "friend" or k == "follower": continue
+      for i, u in enumerate(v[:]):
+        if u[1] == opponent:
+          if u[0] not in users: users[u[0]] = []
+            users[u[0]].append(p_dic[k])
+            v.pop(i)
+
+  for user in users: SET.append(path_set + user)
+
+  return 2node, SET
+
+
+      opponent = v.pop(0)
+      count[p_dic[k]] += 1
+      break
+
+      for k,v in 2node.items():
+        count[p_dic[k]] += v.count(opponent)
+        2node[k] = list(set[v] - set([opponent])))
+
+      
+      ts = [k for k in count.keys() if count[k] != 0]
+      j = 1
+      for t in ts:
+        if t >= 3: j *= count[t]
+
+      for i, p in p_com.items():
+      
+        if len(set(p) - set(ts)) == 0:
+          graph_count[i-1] += j
+
 
 if __name__ == "__main__":
 
@@ -111,8 +149,8 @@ if __name__ == "__main__":
       ans_follower = list((set(friend2follower) & set(seeds + match)) - set([user]))
       node2node[user]["friend2friend"] = []
       node2node[user]["friend2follower"] = []
-      for i in ans_friend: node2node[user]["friend2friend"].append(i)
-      for i in ans_follower: node2node[user]["friend2follower"].append(i)
+      for i in ans_friend: node2node[user]["friend2friend"].append([friend, i])
+      for i in ans_follower: node2node[user]["friend2follower"].append([friend, i])
       nodeofflags[user][2] = False
       nodeofflags[user][3] = False
   
@@ -133,8 +171,8 @@ if __name__ == "__main__":
       ans_follower = list((set(follower2follower) & set(seeds + match)) - set([user]))
       node2node[user]["follower2friend"] = []
       node2node[user]["follower2follower"] = []
-      for i in ans_friend: node2node[user]["follower2friend"].append(i)
-      for i in ans_follower: node2node[user]["follower2follower"].append(i)
+      for i in ans_friend: node2node[user]["follower2friend"].append([follower, i])
+      for i in ans_follower: node2node[user]["follower2follower"].append([follower, i])
       nodeofflags[user][4] = False
       nodeofflags[user][5] = False
   
@@ -169,29 +207,38 @@ if __name__ == "__main__":
   for user in (seeds + match):
 
     2node = node2node[user] #dic
-    count = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0}
+    path_set = []
 
     while(check(2node)):
 
-      for k, v in 2node.items():
+      while(len(2node["friend"]) != 0 or len(2node["follower"]) != 0):
+
+        if len(2node["friend"]) != 0:
+          opponent = 2node["friend"].pop(0)
+          path_set.append(1)
+          if opponent in 2node["follower"]:
+            path_set.append(2)
+            2node["follower"].pop(2node["follower"].index(opponent))
+        else: 
+          opponent = 2node["follower"].pop(0)
+          path_set.append(2)
+
+        2node, path_set = set_check(2node, opponent, p_dic, path_set)
+  
+        for p in path_set:
+          for k, com in p_com.items():
+            if len(list(set(com) - set(p))) == 0:
+              gpaph_count[k-1] += 1
+
+      for k, v in 2node:
         if len(v) != 0:
-          opponent = v.pop(0)
-          count[p_dic[k]] += 1
+          opponent = v[1]
           break
 
-      for k,v in 2node.items():
-        count[p_dic[k]] += v.count(opponent)
-        2node[k] = list(set[v] - set([opponent])))
+      2node, path_set = set_check(2node, opponent, p_dic, [])
+      for p in path_set:
+        for k, com in p_com.items():
+          if len(list(set(com) - set(p))) == 0:
+            gpaph_count[k-1] += 1
 
-      
-      ts = [k for k in count.keys() if count[k] != 0]
-      j = 1
-      for t in ts:
-        if t >= 3: j *= count[t]
-
-      for i, p in p_com.items():
-      
-        if len(set(p) - set(ts)) == 0:
-          graph_count[i-1] += j
-  
   Mypickle.save("../query/", graphcount)
