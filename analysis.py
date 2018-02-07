@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 from mymodule import Mypickle
-from mymodule import Mypath
 from mymodule import Server_Mydatabase
 import pickle
 import os
@@ -88,6 +87,19 @@ if __name__ == "__main__":
     if len(Server_Mydatabase.select("SELECT * from query where queryID = \'" + queryID + "\'")) != 0: break
     else: print("\ninput again!!\n\n")
 
+  while(1):
+    print("input using database : old or new"))
+    
+    d = input('>>> ')
+
+    if d == "new": 
+      from mymodule import Mypath
+      break
+    elif d == "old": 
+      from mymodule import old_Mypath as Mypath
+      break
+    else: "\ninput again!!\n\n"
+  
   SQL_seeds = Server_Mydatabase.select("SELECT userID from query where queryID = \'" + queryID + "\'" + "and ID = \'0\'")
   SQL_match = Server_Mydatabase.select("SELECT userID from query where queryID LIKE \'%" + queryID + "%\'" + "and result =  \'2\'")
 

@@ -14,7 +14,7 @@ def insert(values):
   c = conn.cursor()
 
   # レコードの登録
-  sql = 'INSERT ignore into follow_graph_old values (%s, %s)'
+  sql = 'INSERT ignore into old_follow_graph values (%s, %s)'
   if isinstance(values,tuple): c.execute(sql, values)  # 1件のみ
   else: c.executemany(sql, values)    # 複数件
   print('\n* complete : insert\n')
@@ -37,13 +37,15 @@ for f in files:
   with gzip.open(followers_path + f, "rb") as ff:
     for line in ff:
       line = line.decode('utf-8').split('\t')
+      print(line)
       user = line[0]
       follower = line[1].replace('\n','')
+      print(user,follower)
       values.append([user, follower])
       break
   break
 
-#insert(values)
+insert(values)
 
 values = []
 
@@ -54,6 +56,7 @@ for f in files:
   with gzip.open(friends_path + f, "rb") as ff:
     for line in ff:
       line = line.decode('utf-8').split('\t')
+      print(line)
       follower = line[1].replace('\n','')
       user = line[0]
       print(user, follower)
@@ -61,4 +64,4 @@ for f in files:
       break
     break
 
-#insert(values)
+insert(values)

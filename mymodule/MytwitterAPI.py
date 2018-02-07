@@ -148,8 +148,18 @@ def limit_check(api_name):
 
     if ID == "":
         print("start sleep")
-        time.sleep(900)
-        ID = 1
+        SQLs = Server_Mydatabase.select('select id, last_use from api_limit where api_name = \'' + api_name + '\'')
+        recent = datetime.datetime(2020,1,1,00,00,00)
+        for SQL in SQLs:
+          use = SQL[1]
+          temp = datetime.datetime(int(use[0:4]),int(use[5:7]),int(use[8:10]),int(use[11:13]),int(use[14:16]),int(use[17:19]))
+          if recent > temp: 
+            recent = temp
+            ID = SQL[0]
+        delta = (now_time - recent).total_seconds()
+        if delta > 900: return ID
+        print("delta.total_seconds : {0}".format(delta))
+        time.sleep(900 - delta)
 
     return ID
 

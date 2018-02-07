@@ -81,12 +81,11 @@ def recommendation(d_flag, pattern, seeds, seeds_score):
     match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
 
     while(pattern == next_pattern):
-      if d_flag:
-        add_match_list, add_match_seeds = Mypath.get_match(pattern, match_users)
-        match_seeds = Mypath.join_dic([match_seeds, add_match_seeds])
-      else:
-        add_match_list, add_match_seeds = old_Mypath.get_match(pattern, match_users)
-        match_seeds = old_Mypath.join_dic([match_seeds, add_match_seeds])
+      if d_flag: from mymodule import Mypath
+      else: from mymodule imort old_Mypath as Mypath
+      
+      add_match_list, add_match_seeds = Mypath.get_match(pattern, match_users)
+      match_seeds = Mypath.join_dic([match_seeds, add_match_seeds])
       match_list = list(set(match_list) & set(add_match_list))
       match_list = ranking(pattern, match_list, match_seeds, seeds_score)
       match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
