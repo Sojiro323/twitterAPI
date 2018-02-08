@@ -17,9 +17,9 @@ path = "../pickle/"
 def main(api):
 
     #check init or restart
-    if os.path.exists(path + "pops_" + api + ".pickle"):
-      pops = load_pickle(api)
-    else: pops = ["761272495"]
+    if os.path.exists(path + "que_" + api + ".pickle"):
+      que = load_pickle(api)
+    else: que = ["761272495"]
 
     if api == 'friend': api_flag = 'friends_only'
     else: api_flag = 'followers_only'
@@ -27,7 +27,7 @@ def main(api):
 
     while(1):
 
-      user = pops.pop(0)
+      user = que.pop()
 
       print("user start : {0}".format(user))
       print(api_flag,user)
@@ -36,23 +36,23 @@ def main(api):
       for ad in add:
         flag = database.check(ad)
         if flag != "protected" and flag != 'NotFound':
-          pops.append(ad)
+          que.insert(0,ad)
 
-      print("pops : {0}".format(len(pops)))
+      print("que : {0}".format(len(que)))
 
 
 
       end_time = time.time()
 
       if end_time - start_time > 1800:
-        Mypickle.save(path, pops, "pops_" + api)
+        Mypickle.save(path, que, "que_" + api)
         start_time = end_time
 
 
 
 def load_pickle(api):
 
-    files = ['pops_' + api]
+    files = ['que_' + api]
     load_files = Mypickle.load(path,files)
 
     return load_files[0]

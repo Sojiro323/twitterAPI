@@ -161,10 +161,7 @@ def update(goal, userID):
 
 
 def tuple2list(tp):
-  ans = []
-  for t in tp:
-    ans.append(t[0])
-  return ans
+  return [t in t[0] in tp]
 
 
 
@@ -973,10 +970,4 @@ def join_dic(dics):
       if k not in ans: ans[k] = v
       else: ans[k] = ans[k] + v
 
-  for k, v in ans.items():
-    """s = set()
-    temp = [x for x in v if x in s or s.add(x)]
-    ans[k] = list(set(temp))"""
-    ans[k] = list(set(v))
-
-  return ans
+  return {k:list(set(v)) for k,v in ans.items()}

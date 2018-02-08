@@ -1,137 +1,207 @@
 from connect import database
 from connect import twitter
+from mymodule import Mypickle
+import os
 import json
 
+path_com = {
+1:[1],
+2:[2],
+3:[3],
+4:[4],
+5:[5],
+6:[6],
+7:[1,2],
+8:[2,3],
+9:[1,3],
+10:[3,5],
+11:[3,6],
+12:[2,4],
+13:[1,4],
+14:[4,5],
+15:[4,6],
+16:[2,5],
+17:[1,5],
+18:[2,6],
+19:[1,6],
+20:[1,2,3],
+21:[1,2,4],
+22:[1,2,5],
+23:[1,2,6],
+24:[3,4,5,6],
+25:[2,3,5],
+26:[1,3,5],
+27:[2,3,6],
+28:[1,3,6],
+29:[2,4,5],
+30:[1,4,5],
+31:[2,4,6],
+32:[1,4,6],
+33:[1,2,3,5],
+34:[1,2,3,6],
+35:[1,2,4,5],
+36:[1,2,4,6],
+37:[2,3,4,5,6],
+38:[1,3,4,5,6],
+39:[1,2,3,4,5,6]
+}
+
+DIR = '../pickle/positive/'
 
 def get_match(pattern, seeds):
-  
+
   from mymodule import Myyaml
   path_pattern = Myyaml.load("path")["path_com"]["39"]
 
   print("if check {0} : {1}".format(pattern, path_pattern[int(pattern)-1]))
-  
-  if pattern == path_pattern[0]:#friend
-    match_list, match_seeds = basic_pass1(seeds)
 
-  elif pattern == path_pattern[1]:#follower
-    match_list, match_seeds = basic_pass2(seeds)
+  needs = path_com[int(pattern)]
 
-  elif pattern == path_pattern[2]:#com_friend
-    match_list, match_seeds = basic_pass3(seeds)
+  target_list = []
+  target_seeds = {}
 
-  elif pattern == path_pattern[3]:#com_follower
-    match_list, match_seeds = basic_pass4(seeds)
+  for seed in seeds:
+    print("graph {0}".format(seed))
+    f = True
+    for need in needs:
+      if os.path.isfile(DIR + seed + '_' + str(need) + '.pickle') == False:
+          f = False
+          break
 
-  elif pattern == path_pattern[4]:#friend_friend
-    match_list, match_seeds = basic_pass5(seeds)
+    if f:
+      print("all pickle")
+      match_list = []
+      for need in needs:
+        su = Mypickle.load(DIR, seed + '_' +str(need))
+        match_list = list(set(match_list) | set(su))
 
-  elif pattern == path_pattern[5]:#follower_follower
-    match_list, match_seeds = basic_pass6(seeds)
+    else:
+      print("else")
+      if pattern == path_pattern[0]:#friend
+        match_list = basic_pass1(seed)
 
-  elif pattern == path_pattern[6]:#mutual
-    match_list, match_seeds = basic_pass7(seeds)
+      elif pattern == path_pattern[1]:#follower
+        match_list = basic_pass2(seed)
 
-  elif pattern == path_pattern[7]:#8
-    match_list, match_seeds = basic_pass8(seeds)
+      elif pattern == path_pattern[2]:#com_friend
+        match_list = basic_pass3(seed)
 
-  elif pattern == path_pattern[8]:#9
-    match_list, match_seeds = basic_pass9(seeds)
+      elif pattern == path_pattern[3]:#com_follower
+        match_list = basic_pass4(seed)
 
-  elif pattern == path_pattern[9]:#10
-    match_list, match_seeds = basic_pass10(seeds)
+      elif pattern == path_pattern[4]:#friend_friend
+        match_list = basic_pass5(seed)
 
-  elif pattern == path_pattern[10]:#11
-    match_list, match_seeds = basic_pass11(seeds)
+      elif pattern == path_pattern[5]:#follower_follower
+        match_list = basic_pass6(seed)
 
-  elif pattern == path_pattern[11]:#12
-    match_list, match_seeds = basic_pass12(seeds)
+      elif pattern == path_pattern[6]:#mutual
+        match_list = basic_pass7(seed)
 
-  elif pattern == path_pattern[12]:#13
-    match_list, match_seeds = basic_pass13(seeds)
+      elif pattern == path_pattern[7]:#8
+        match_list = basic_pass8(seed)
 
-  elif pattern == path_pattern[13]:#14
-    match_list, match_seeds = basic_pass14(seeds)
+      elif pattern == path_pattern[8]:#9
+        match_list = basic_pass9(seed)
 
-  elif pattern == path_pattern[14]:#15
-    match_list, match_seeds = basic_pass15(seeds)
+      elif pattern == path_pattern[9]:#10
+        match_list = basic_pass10(seed)
 
-  elif pattern == path_pattern[15]:#16
-    match_list, match_seeds = basic_pass16(seeds)
+      elif pattern == path_pattern[10]:#11
+        match_list = basic_pass11(seed)
 
-  elif pattern == path_pattern[16]:#17
-    match_list, match_seeds = basic_pass17(seeds)
+      elif pattern == path_pattern[11]:#12
+        match_list = basic_pass12(seed)
 
-  elif pattern == path_pattern[17]:#18
-    match_list, match_seeds = basic_pass18(seeds)
+      elif pattern == path_pattern[12]:#13
+        match_list = basic_pass13(seed)
 
-  elif pattern == path_pattern[18]:#19
-    match_list, match_seeds = basic_pass19(seeds)
+      elif pattern == path_pattern[13]:#14
+        match_list = basic_pass14(seed)
 
-  elif pattern == path_pattern[19]:#20
-    match_list, match_seeds = basic_pass20(seeds)
+      elif pattern == path_pattern[14]:#15
+        match_list = basic_pass15(seed)
 
-  elif pattern == path_pattern[20]:#21
-    match_list, match_seeds = basic_pass21(seeds)
+      elif pattern == path_pattern[15]:#16
+        match_list = basic_pass16(seed)
 
-  elif pattern == path_pattern[21]:#22
-    match_list, match_seeds = basic_pass22(seeds)
+      elif pattern == path_pattern[16]:#17
+        match_list = basic_pass17(seed)
 
-  elif pattern == path_pattern[22]:#23
-    match_list, match_seeds = basic_pass23(seeds)
+      elif pattern == path_pattern[17]:#18
+        match_list = basic_pass18(seed)
 
-  elif pattern == path_pattern[23]:#24
-    match_list, match_seeds = basic_pass24(seeds)
+      elif pattern == path_pattern[18]:#19
+        match_list = basic_pass19(seed)
 
-  elif pattern == path_pattern[24]:#25
-    match_list, match_seeds = basic_pass25(seeds)
+      elif pattern == path_pattern[19]:#20
+        match_list = basic_pass20(seed)
 
-  elif pattern == path_pattern[25]:#26
-    match_list, match_seeds = basic_pass26(seeds)
+      elif pattern == path_pattern[20]:#21
+        match_list = basic_pass21(seed)
 
-  elif pattern == path_pattern[26]:#27
-    match_list, match_seeds = basic_pass27(seeds)
+      elif pattern == path_pattern[21]:#22
+        match_list = basic_pass22(seed)
 
-  elif pattern == path_pattern[27]:#28
-    match_list, match_seeds = basic_pass28(seeds)
+      elif pattern == path_pattern[22]:#23
+        match_list = basic_pass23(seed)
 
-  elif pattern == path_pattern[28]:#29
-    match_list, match_seeds = basic_pass29(seeds)
+      elif pattern == path_pattern[23]:#24
+        match_list = basic_pass24(seed)
 
-  elif pattern == path_pattern[29]:#30
-    match_list, match_seeds = basic_pass30(seeds)
+      elif pattern == path_pattern[24]:#25
+        match_list = basic_pass25(seed)
 
-  elif pattern == path_pattern[30]:#31
-    match_list, match_seeds = basic_pass31(seeds)
+      elif pattern == path_pattern[25]:#26
+        match_list = basic_pass26(seed)
 
-  elif pattern == path_pattern[31]:#32
-    match_list, match_seeds = basic_pass32(seeds)
+      elif pattern == path_pattern[26]:#27
+        match_list = basic_pass27(seed)
 
-  elif pattern == path_pattern[32]:#33
-    match_list, match_seeds = basic_pass33(seeds)
+      elif pattern == path_pattern[27]:#28
+        match_list = basic_pass28(seed)
 
-  elif pattern == path_pattern[33]:#34
-    match_list, match_seeds = basic_pass34(seeds)
+      elif pattern == path_pattern[28]:#29
+        match_list = basic_pass29(seed)
 
-  elif pattern == path_pattern[34]:#35
-    match_list, match_seeds = basic_pass35(seeds)
-    match_seeds = join_dic([match_seeds])
+      elif pattern == path_pattern[29]:#30
+        match_list = basic_pass30(seed)
 
-  elif pattern is path_pattern[35]:#36
-    match_list, match_seeds = basic_pass36(seeds)
+      elif pattern == path_pattern[30]:#31
+        match_list = basic_pass31(seed)
 
-  elif pattern is path_pattern[36]:#37
-    match_list, match_seeds = basic_pass37(seeds)
+      elif pattern == path_pattern[31]:#32
+        match_list = basic_pass32(seed)
 
-  elif pattern is path_pattern[37]:#38
-    match_list, match_seeds = basic_pass38(seeds)
+      elif pattern == path_pattern[32]:#33
+        match_list = basic_pass33(seed)
 
-  elif pattern is path_pattern[38]:#39
-    match_list, match_seeds = basic_pass39(seeds)
+      elif pattern == path_pattern[33]:#34
+        match_list = basic_pass34(seed)
 
-  else:
-    print("key error : {0}".format(pattern))
+      elif pattern == path_pattern[34]:#35
+        match_list = basic_pass35(seed)
+        match_seeds = join_dic([match_seeds])
 
-  return match_list, match_seeds
+      elif pattern is path_pattern[35]:#36
+        match_list = basic_pass36(seed)
+
+      elif pattern is path_pattern[36]:#37
+        match_list = basic_pass37(seed)
+
+      elif pattern is path_pattern[37]:#38
+        match_list = basic_pass38(seed)
+
+      elif pattern is path_pattern[38]:#39
+        match_list = basic_pass39(seed)
+
+      else:
+        print("key error : {0}".format(pattern))
+    print("match_list : {0}".format(len(match_list)))
+    target_list = list((set(target_list) | set(match_list)))
+    target_seeds = match(seed, match_list, target_seeds)
+
+  return target_list, target_seeds
 
 
 def match(seed, match_list, match_seeds):
@@ -141,15 +211,67 @@ def match(seed, match_list, match_seeds):
 
   for match in match_list:
     if match not in match_seeds: match_seeds[match] = []
-    match_seeds[match].append(seed)
+    match_seeds[match] += [seed]
 
   return match_seeds
 
-def update(goal, userID):
+def up(goal, userID):
 
   friends = []
   followers = []
   flag = database.check(userID)
+
+  if goal == 'friends_only':
+    if flag == 'followers_only':
+      friends = use_API(userID, 'friends')
+      if friends is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'all\' )')
+    elif flag == '***':
+      friends = use_API(userID, 'friends')
+      if friends is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'friends_only\' )')
+    elif flag == 'friends_only' or flag == 'all':
+      friends = database.select('select followerID from follow_graph where userID = \'' + userID + '\'')
+      friends = tuple2list(friends)
+
+    if friends is None: return []
+    return friends
+
+  else:
+    if flag == 'friends_only':
+      followers = use_API(userID, 'followers')
+      if followers is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'all\' )')
+    elif flag == '***':
+      followers = use_API(userID, 'followers')
+      if followers is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'followers_only\' )')
+    elif flag == 'followers_only' or flag == 'all':
+      followers = database.select('select userID from follow_graph where followerID = \'' + userID + '\'')
+      followers = tuple2list(followers)
+
+    if followers is None: return []
+    return followers
+
+def update(goal, userID, seed):
+
+  friends = []
+  followers = []
+  flag = database.check(userID)
+
+  if userID == seed:
+    if goal == 'all':
+      if os.path.isfile(DIR + seed + '_1' + '.pickle'):
+          friends = Mypickle.load(DIR, seed + '_1')
+      else:
+          up('friends_only', userID)
+      if os.path.isfile(DIR + seed + '_2' + '.pickle'):
+          followers = Mypickle.load(DIR, seed + '_2')
+      else:
+          up('followers_only', userID)
+      return friends, followers
+    elif goal == 'friends_only':
+      if os.path.isfile(DIR + seed + '_1' + '.pickle'): return Mypickle.load(DIR, seed + '_1')
+    else:
+      if os.path.isfile(DIR + seed + '_2' + '.pickle'): return Mypickle.load(DIR, seed + '_2')
+
+
 
   if goal == 'all':
     if flag == '***':
@@ -220,7 +342,7 @@ def use_API(userID, api):
     if return_list is None: return None
     for follower in return_list:
       values += "( \'" + follower + "\', \'" +  userID + "\'),"
-    database.insert("insert ignore into follow_graph " + values[-1] )
+    database.select("insert ignore into follow_graph " + values[-1] )
 
   return return_list
 
@@ -243,814 +365,722 @@ def acsessAPI(userID, api):
       return None
 
     IDs = json.loads(responce.text)
-    for ID in IDs['ids']:
-        return_list.append(ID)
+    return_list = [ID for ID in IDs['ids']]
 
     print('{0} \'s return list : \n {1}'.format(userID, len(return_list)))
     return return_list
 
 
 def tuple2list(tp):
-  return ans = [t[0] for t in tp] 
+  return [t[0] for t in tp]
 
 
-def basic_pass1(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends = update("friends_only",seed)
-    if len(friends) == 0: continue
-
-    friends = list(set(friends) - set(seeds))
-    match_list = list(set(match_list) | set(friends))
-    match_seeds = match(seed, friends, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass2(seeds):
+def basic_pass1(seed):
 
   match_list = []
-  match_seeds = {}
 
-  for seed in seeds:
-    followers = update("followers_only",seed)
-    if len(followers) == 0: continue
+  friends = update("friends_only",seed, seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'): Mypickle.save(DIR, friends, seed + '_1')
 
-    followers = list(set(followers) - set(seeds))
+  return friends
+
+def basic_pass2(seed):
+
+  match_list = []
+
+  followers = update("followers_only",seed, seed)
+  if not os.path.isfile(DIR + seed + '_2.pickle'): Mypickle.save(DIR, followers, seed + '_2')
+
+  return followers
+
+
+def basic_pass3(seed):
+
+  match_list = []
+
+  friends = update("friends_only",seed ,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+
+  for friend in friends:
+    followers = update("followers_only",friend, seed)
     match_list = list(set(match_list) | set(followers))
-    match_seeds = match(seed, followers, match_seeds)
 
-  return match_list, match_seeds
-
-
-def basic_pass3(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends = update("friends_only",seed)
-    if len(friends) == 0: continue
-
-    for friend in friends:
-      followers = update("followers_only",friend)
-      if len(followers) == 0: continue
-
-      followers = list(set(followers) - set(seeds))
-      match_list = list(set(match_list) | set(followers))
-      match_seeds = match(seed, followers, match_seeds)
-
-  return match_list, match_seeds
+  if not os.path.isfile(DIR + seed + '_3.pickle'):  Mypickle.save(DIR, match_list, seed + '_3')
+  return match_list
 
 
 
-def basic_pass4(seeds):
+def basic_pass4(seed):
 
   match_list = []
-  match_seeds = {}
 
-  for seed in seeds:
-    followers = update("followers_only",seed)
-    if len(followers) == 0: continue
 
-    for follower in followers:
-      friends = update("friends_only",follower)
-      if len(friends) == 0: continue
+  followers = update("followers_only",seed, seed)
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
 
-      friends = list(set(friends) - set(seeds))
-      match_list = list(set(match_list) | set(friends))
-      match_seeds = match(seed, friends, match_seeds)
+  for follower in followers:
+    friends = update("friends_only",follower, seed)
+    match_list = list(set(match_list) | set(friends))
 
-  return match_list, match_seeds
+  if not os.path.isfile(DIR + seed + '_4.pickle'):  Mypickle.save(DIR, match_list, seed + '_4')
+  return match_list
 
 
 
-def basic_pass5(seeds):
+def basic_pass5(seed):
 
   match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends = update("friends_only",seed)
-    if len(friends) == 0: continue
-
-    for friend in friends:
-      friends_2 = update("friends_only",friend)
-      if len(friends_2) == 0: continue
-
-      friends_2 = list(set(friends_2) - set(seeds))
-      match_list = list(set(match_list) | set(friends_2))
-      match_seeds = match(seed, friends_2, match_seeds)
 
 
-  return match_list, match_seeds
+  friends = update("friends_only",seed, seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+
+  for friend in friends:
+    friends_2 = update("friends_only",friend,seed)
+    match_list = list(set(match_list) | set(friends_2))
+
+  if not os.path.isfile(DIR + seed + '_5.pickle'):  Mypickle.save(DIR, match_list, seed + '_5')
+  return match_list
 
 
-def basic_pass6(seeds):
+def basic_pass6(seed):
 
   match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    followers = update("followers_only",seed)
-    if len(followers) == 0: continue
-
-    for follower in followers:
-      followers = update("followers_only",follower)
-      if len(followers_2) == 0: continue
-
-      followers_2 = list(set(followers_2) - set(seeds))
-      match_list = list(set(match_list) | set(followers_2))
-      match_seeds = match(seed, followers_2, match_seeds)
 
 
-  return match_list, match_seeds
+  followers = update("followers_only",seed,seed)
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
 
-def basic_pass7(seeds):
+  for follower in followers:
+    followers = update("followers_only",follower,seed)
+    match_list = list(set(match_list) | set(followers_2))
+
+
+  if not os.path.isfile(DIR + seed + '_6.pickle'):  Mypickle.save(DIR, match_list, seed + '_6')
+  return match_list
+
+def basic_pass7(seed):
 
   match_list = []
-  match_seeds = {}
 
-  for seed in seeds:
-    friends, followers = update("all",seed)
-    if len(friends) == 0 or len(followers) == 0: continue
 
-    ans = list(set(followers) & set(friends))
-    ans = list(set(ans) - set(seeds))
+  friends, followers = update("all",seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+  match_list = list(set(followers) & set(friends))
+
+  return match_list
+
+def basic_pass8(seed):
+
+  match_list = []
+  frfo = []
+
+
+  friends, followers  = update("all", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for friend in friends:
+    friends2followers = update("followers_only",friend,seed)
+    frfo = list(set(friends2followers) & set(frfo))
+    ans = list(set(followers) & set(friends2followers))
     match_list = list(set(match_list) | set(ans))
-    match_seeds = match(seed, ans, match_seeds)
 
-  return match_list, match_seeds
+  if not os.path.isfile(DIR + seed + '_3.pickle'):  Mypickle.save(DIR, frfo, seed + '_3')
+  return match_list
 
-def basic_pass8(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers  = update("all", seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    for friend in friends:
-      friends2followers = update("followers_only",friend)
-      if len(friends2followers) == 0: continue
-
-      ans = list(set(followers) & set(friends2followers))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass9(seeds):
+def basic_pass9(seed):
 
   match_list = []
-  match_seeds = {}
+  frfo = []
 
-  for seed in seeds:
-    friends = update("friends_only", seed)
-    if len(friends) == 0: continue
+  friends = update("friends_only", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
 
-    for friend in friends:
-      friends2followers = update("followers_only",friend)
-      if len(friends2followers) == 0: continue
-
-      ans = list(set(friends) & set(friends2followers))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass10(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends = update("friends_only", seed)
-    if len(friends) == 0: continue
-
-    for friend in friends:
-      friends2friends, friends2followers = update("all",friend)
-      if len(friends2followers) == 0 or len(friends2friends) == 0: continue
-
-      ans = list(set(friends2friends) & set(friends2followers))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass11(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers = update("all",seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    mutual = list(set(followers) & set(friends))
-    mutual = list(set(mutual) - set(seeds))
-
-    for m in mutual: ans = update("followers_only", m)
-
+  for friend in friends:
+    friends2followers = update("followers_only",friend,seed)
+    frfo = list(set(friends2followers) & set(frfo))
+    ans = list(set(friends) & set(friends2followers))
     match_list = list(set(match_list) | set(ans))
-    match_seeds = match(seed, ans, match_seeds)
 
-  return match_list, match_seeds
+  if not os.path.isfile(DIR + seed + '_3.pickle'):  Mypickle.save(DIR, frfo, seed + '_3')
+  return match_list
 
-def basic_pass12(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    followers = update("followers_only", seed)
-    if len(followers) == 0: continue
-
-    for follower in followers:
-      followers2friends = update("friends_only",follower)
-      if len(followers2friends) == 0: continue
-
-      ans = list(set(followers) & set(followers2friends))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass13(seeds):
+def basic_pass10(seed):
 
   match_list = []
-  match_seeds = {}
+  frfr = []
+  frfo = []
 
-  for seed in seeds:
-    friends, followers  = update("all", seed)
-    if len(friends) == 0 or len(followers) == 0: continue
+  friends = update("friends_only", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
 
-    for follower in followers:
-      followers2friends = update("friends_only",follower)
-      if len(followers2friends) == 0: continue
-
-      ans = list(set(friends) & set(followers2friends))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass14(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers = update("all",seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    mutual = list(set(followers) & set(friends))
-    mutual = list(set(mutual) - set(seeds))
-
-    for m in mutual: ans = update("friends_only", m)
-
+  for friend in friends:
+    friends2friends, friends2followers = update("all",friend,seed)
+    frfo = list(set(friends2followers) & set(frfo))
+    frfr = list(set(friends2friends) & set(frfr))
+    ans = list(set(friends2friends) & set(friends2followers))
     match_list = list(set(match_list) | set(ans))
-    match_seeds = match(seed, ans, match_seeds)
 
-  return match_list, match_seeds
+  if not os.path.isfile(DIR + seed + '_5.pickle'):  Mypickle.save(DIR, frfr, seed + '_5')
+  if not os.path.isfile(DIR + seed + '_3.pickle'):  Mypickle.save(DIR, frfo, seed + '_3')
+  return match_list
 
-def basic_pass15(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    followers = update("followers_only", seed)
-    if len(followers) == 0: continue
-
-    for follower in followers:
-      followers2friends, followers2followers = update("all",follower)
-      if len(followers2followers) == 0 or len(followers2friends) == 0: continue
-
-      ans = list(set(followers2friends) & set(followers2followers))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass16(seeds):
+def basic_pass11(seed):
 
   match_list = []
-  match_seeds = {}
 
-  for seed in seeds:
-    friends, followers  = update("all", seed)
-    if len(friends) == 0 or len(followers) == 0: continue
+  friends, followers = update("all",seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
 
-    for friend in friends:
-      friends2friends = update("friends_only",friend)
-      if len(friends2friends) == 0: continue
+  mutual = list(set(followers) & set(friends))
+  mutual = list(set(mutual) - set(seeds))
 
-      ans = list(set(followers) & set(friends2friends))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
+  for m in mutual: ans = update("followers_only", m,seed)
 
-  return match_list, match_seeds
+  match_list = list(set(match_list) | set(ans))
 
-def basic_pass17(seeds):
+  return match_list
+
+def basic_pass12(seed):
 
   match_list = []
-  match_seeds = {}
+  fofr = []
 
-  for seed in seeds:
-    friends = update("friends_only", seed)
-    if len(friends) == 0: continue
+  followers = update("followers_only", seed,seed)
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
 
-    for friend in friends:
-      friends2friends = update("friends_only",friend)
-      if len(friends2friends) == 0: continue
-
-      ans = list(set(friends) & set(friends2friends))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass18(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    followers = update("followers_only", seed)
-    if len(followers) == 0: continue
-
-    for follower in followers:
-      followers2followers = update("followers_only",follower)
-      if len(followers2followers) == 0: continue
-
-      ans = list(set(followers) & set(followers2followers))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass19(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers  = update("all", seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    for follower in followers:
-      followers2followers = update("followers_only",follower)
-      if len(follower2followers) == 0: continue
-
-      ans = list(set(friends) & set(followers2followers))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass20(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers  = update("all", seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    for friend in friends:
-      friends2followers = update("followers_only",friend)
-      if len(friends2followers) == 0: continue
-
-      ans = list(set(followers) & set(friend) & set(friends2followers))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass21(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers  = update("all", seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    for follower in followers:
-      followers2friends = update("friends_only",follower)
-      if len(follower2friends) == 0: continue
-
-      ans = list(set(friends) & set(followers) & set(followers2friends))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass22(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers  = update("all", seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    for friend in friends:
-      friends2friends = update("friends_only",friend)
-      if len(friends2friends) == 0: continue
-
-      ans = list(set(followers) & set(friends) & set(friends2friends))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass23(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers  = update("all", seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    for follower in followers:
-      followers2followers = update("followers_only",follower)
-      if len(follower2followers) == 0: continue
-
-      ans = list(set(friends) & set(followers) & set(followers2followers))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass24(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers = update("all",seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    mutual = list(set(followers) & set(friends))
-    mutual = list(set(mutual) - set(seeds))
-
-    for m in mutual:
-      mutual2friends, mutual2followers = update("all", m)
-
-      ans = list(set(mutual2friends) & set(mutual2followers))
-      ans = list(set(ans) - set(seeds))
-
+  for follower in followers:
+    followers2friends = update("friends_only",follower,seed)
+    fofr = list(set(followers2friends) & set(fofr))
+    ans = list(set(followers) & set(followers2friends))
     match_list = list(set(match_list) | set(ans))
-    match_seeds = match(seed, ans, match_seeds)
 
-  return match_list, match_seeds
+  if not os.path.isfile(DIR + seed + '_4.pickle'):  Mypickle.save(DIR, fofr, seed + '_4')
+  return match_list
 
-def basic_pass25(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers  = update("all", seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    for friend in friends:
-      friends2friends, friends2followers = update("all",friend)
-      if len(friends2followers) == 0 or len(friends2friends): continue
-
-      ans = list(set(followers) & set(friends2followers) & set(friends2followers))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass26(seeds):
+def basic_pass13(seed):
 
   match_list = []
-  match_seeds = {}
+  fofr = []
 
-  for seed in seeds:
-    friends = update("friends_only", seed)
-    if len(friends) == 0: continue
+  friends, followers  = update("all", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
 
-    for friend in friends:
-      friends2friends, friends2followers = update("all",friend)
-      if len(friends2friends) == 0 or len(friends2followers): continue
-
-      ans = list(set(friends) & set(friends2friends) & set(friends2followers))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass27(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers = update("all",seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    mutual = list(set(followers) & set(friends))
-    mutual = list(set(mutual) - set(seeds))
-
-    for m in mutual:
-      mutual2followers = update("followers_only", m)
-
-      ans = list(set(mutual2followers) & set(followers))
-      ans = list(set(ans) - set(seeds))
-
+  for follower in followers:
+    followers2friends = update("friends_only",follower,seed)
+    fofr = list(set(followers2friends) & set(fofr))
+    ans = list(set(friends) & set(followers2friends))
     match_list = list(set(match_list) | set(ans))
-    match_seeds = match(seed, ans, match_seeds)
 
-  return match_list, match_seeds
+  if not os.path.isfile(DIR + seed + '_4.pickle'):  Mypickle.save(DIR, fofr, seed + '_4')
+  return match_list
+
+def basic_pass14(seed):
+
+  match_list = []
+
+
+  friends, followers = update("all",seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  mutual = list(set(followers) & set(friends))
+  mutual = list(set(mutual) - set(seeds))
+
+  for m in mutual: ans = update("friends_only", m,seed)
+
+  match_list = list(set(match_list) | set(ans))
+
+  return match_list
+
+def basic_pass15(seed):
+
+  match_list = []
+  fofo = []
+  fofr = []
+
+  followers = update("followers_only", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, followers, seed + '_1')
+
+  for follower in followers:
+    followers2friends, followers2followers = update("all",follower,seed)
+    fofr = list(set(followers2friends) & set(fofr))
+    fofo = list(set(followers2followers) & set(fofo))
+    ans = list(set(followers2friends) & set(followers2followers))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_4.pickle'):  Mypickle.save(DIR, fofr, seed + '_4')
+  if not os.path.isfile(DIR + seed + '_3.pickle'):  Mypickle.save(DIR, fofo, seed + '_3')
+  return match_list
+
+def basic_pass16(seed):
+
+  match_list = []
+  frfr = []
+
+  friends, followers  = update("all", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for friend in friends:
+    friends2friends = update("friends_only",friend,seed)
+    frfr = list(set(friends2friends) & set(frfr))
+    ans = list(set(followers) & set(friends2friends))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_5.pickle'):  Mypickle.save(DIR, frfr, seed + '_5')
+  return match_list
+
+def basic_pass17(seed):
+
+  match_list = []
+  frfr = []
+
+  friends = update("friends_only", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+
+  for friend in friends:
+    friends2friends = update("friends_only",friend,seed)
+    frfr = list(set(friends2friends) & set(frfr))
+    ans = list(set(friends) & set(friends2friends))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_5.pickle'):  Mypickle.save(DIR, frfr, seed + '_5')
+  return match_list
+
+def basic_pass18(seed):
+
+  match_list = []
+  fofo = []
+
+  followers = update("followers_only", seed,seed)
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for follower in followers:
+    followers2followers = update("followers_only",follower,seed)
+    fofo = list(set(followers2followers) & set(fofo))
+    ans = list(set(followers) & set(followers2followers))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_3.pickle'):  Mypickle.save(DIR, fofo, seed + '_3')
+  return match_list
+
+def basic_pass19(seed):
+
+  match_list = []
+  fofo = []
+
+
+  friends, followers  = update("all", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for follower in followers:
+    followers2followers = update("followers_only",follower,seed)
+    fofo = list(set(followers2followers) & set(fofo))
+    ans = list(set(follower) & set(friends) & set(followers2followers))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_6.pickle'):  Mypickle.save(DIR, fofo, seed + '_6')
+  return match_list
+
+def basic_pass20(seed):
+
+  match_list = []
+  frfo = []
+
+  friends, followers  = update("all", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for friend in friends:
+    friends2followers = update("followers_only",friend,seed)
+    frfo = list(set(friends2followers) & set(frfo))
+    ans = list(set(followers) & set(friend) & set(friends2followers))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_3.pickle'):  Mypickle.save(DIR, frfo, seed + '_3')
+  return match_list
+
+def basic_pass21(seed):
+
+  match_list = []
+  fofr = []
+
+  friends, followers  = update("all", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for follower in followers:
+    followers2friends = update("friends_only",follower,seed)
+    fofr = list(set(followers2friends) & set(fofr))
+    ans = list(set(friends) & set(followers) & set(followers2friends))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_4.pickle'):  Mypickle.save(DIR, fofr, seed + '_4')
+  return match_list
+
+def basic_pass22(seed):
+
+  match_list = []
+  frfr = []
+
+  friends, followers  = update("all", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for friend in friends:
+    friends2friends = update("friends_only",friend,seed)
+    frfr = list(set(friends2friends) & set(frfr))
+    ans = list(set(followers) & set(friends) & set(friends2friends))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_5.pickle'):  Mypickle.save(DIR, frfr, seed + '_5')
+  return match_list
+
+def basic_pass23(seed):
+
+  match_list = []
+  fofo = []
+
+  friends, followers  = update("all", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for follower in followers:
+    followers2followers = update("followers_only",follower,seed)
+    fofo = list(set(followers2followers) & set(fofo))
+    ans = list(set(friends) & set(followers) & set(followers2followers))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_6.pickle'):  Mypickle.save(DIR, fofo, seed + '_6')
+  return match_list
+
+def basic_pass24(seed):
+
+  match_list = []
+
+  friends, followers = update("all",seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  mutual = list(set(followers) & set(friends))
+
+  for m in mutual:
+    mutual2friends, mutual2followers = update("all", m,seed)
+
+    ans = list(set(mutual2friends) & set(mutual2followers))
+
+  match_list = list(set(match_list) | set(ans))
+
+  return match_list
+
+def basic_pass25(seed):
+
+  match_list = []
+  frfr = []
+  frfo = []
+
+  friends, followers  = update("all", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'): Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for friend in friends:
+    friends2friends, friends2followers = update("all",friend,seed)
+    frfr = list(set(friends2friends) & set(frfr))
+    frfo = list(set(friends2followers) & set(frfo))
+    ans = list(set(followers) & set(friends2followers) & set(friends2followers))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_5.pickle'):  Mypickle.save(DIR, frfr, seed + '_5')
+  if not os.path.isfile(DIR + seed + '_3.pickle'):  Mypickle.save(DIR, frfo, seed + '_3')
+  return match_list
+
+def basic_pass26(seed):
+
+  match_list = []
+  frfr = []
+  frfo = []
+
+  friends = update("friends_only", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+
+  for friend in friends:
+    friends2friends, friends2followers = update("all",friend,seed)
+    frfr = list(set(friends2friends) & set(frfr))
+    frfo = list(set(friends2followers) & set(frfo))
+    ans = list(set(friends) & set(friends2friends) & set(friends2followers))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_5.pickle'):  Mypickle.save(DIR, frfr, seed + '_5')
+  if not os.path.isfile(DIR + seed + '_3.pickle'):  Mypickle.save(DIR, frfo, seed + '_3')
+  return match_list
+
+def basic_pass27(seed):
+
+  match_list = []
+
+
+  friends, followers = update("all",seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  mutual = list(set(followers) & set(friends))
+
+  for m in mutual:
+    mutual2followers = update("followers_only", m,seed)
+
+    ans = list(set(mutual2followers) & set(followers))
+
+  match_list = list(set(match_list) | set(ans))
+
+  return match_list
 
 def basic_pass28(seeds):
 
   match_list = []
-  match_seeds = {}
 
-  for seed in seeds:
-    friends, followers = update("all",seed)
-    if len(friends) == 0 or len(followers) == 0: continue
 
-    mutual = list(set(followers) & set(friends))
-    mutual = list(set(mutual) - set(seeds))
+  friends, followers = update("all",seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
 
-    for m in mutual:
-      mutual2followers = update("followers_only", m)
+  mutual = list(set(followers) & set(friends))
 
-      ans = list(set(mutual2followers) & set(friends))
-      ans = list(set(ans) - set(seeds))
+  for m in mutual:
+    mutual2followers = update("followers_only", m,seed)
 
-    match_list = list(set(match_list) | set(ans))
-    match_seeds = match(seed, ans, match_seeds)
+    ans = list(set(mutual2followers) & set(friends))
 
-  return match_list, match_seeds
+  match_list = list(set(match_list) | set(ans))
 
-def basic_pass29(seeds):
+  return match_list
+
+def basic_pass29(seed):
 
   match_list = []
-  match_seeds = {}
 
-  for seed in seeds:
-    friends, followers = update("all",seed)
-    if len(friends) == 0 or len(followers) == 0: continue
 
-    mutual = list(set(followers) & set(friends))
-    mutual = list(set(mutual) - set(seeds))
+  friends, followers = update("all",seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
 
-    for m in mutual:
-      mutual2friends = update("friends_only", m)
+  mutual = list(set(followers) & set(friends))
 
-      ans = list(set(mutual2friends) & set(followers))
-      ans = list(set(ans) - set(seeds))
+  for m in mutual:
+    mutual2friends = update("friends_only", m,seed)
 
+    ans = list(set(mutual2friends) & set(followers))
+
+  match_list = list(set(match_list) | set(ans))
+
+  return match_list
+
+def basic_pass30(seed):
+
+  match_list = []
+
+
+  friends, followers = update("all",seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  mutual = list(set(followers) & set(friends))
+
+  for m in mutual:
+      mutual2friends = update("friends_only", m,seed)
+
+      ans = list(set(mutual2friends) & set(friends))
+
+  match_list = list(set(match_list) | set(ans))
+
+  return match_list
+
+def basic_pass31(seed):
+
+  match_list = []
+  fofr = []
+  fofo = []
+
+  followers = update("followers_only", seed,seed)
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for follower in followers:
+    followers2friends, followers2followers = update("all",follower,seed)
+    fofr = list(set(followers2friends) & set(fofr))
+    fofo = list(set(followers2followers) & set(fofo))
+    ans = list(set(followers2friends) & set(followers2followers) & set(followers))
     match_list = list(set(match_list) | set(ans))
-    match_seeds = match(seed, ans, match_seeds)
 
-  return match_list, match_seeds
+  if not os.path.isfile(DIR + seed + '_4.pickle'):  Mypickle.save(DIR, fofr, seed + '_4')
+  if not os.path.isfile(DIR + seed + '_6.pickle'):  Mypickle.save(DIR, fofo, seed + '_6')
+  return match_list
 
-  def basic_pass30(seeds):
+def basic_pass32(seed):
+
+  match_list = []
+  fofr = []
+  fofo = []
+
+  friends, followers = update("all", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for follower in followers:
+    followers2friends, followers2followers = update("all",follower,seed)
+    fofr = list(set(followers2friends) & set(fofr))
+    fofo = list(set(followers2followers) & set(fofo))
+    ans = list(set(followers2friends) & set(followers2followers) & set(friends))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_4.pickle'):  Mypickle.save(DIR, fofr, seed + '_4')
+  if not os.path.isfile(DIR + seed + '_6.pickle'):  Mypickle.save(DIR, fofo, seed + '_6')
+  return match_list
+
+def basic_pass33(seed):
+
+  match_list = []
+  frfr = []
+  frfo = []
+
+  friends, followers  = update("all", seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for friend in friends:
+    friends2friends, friends2followers = update("all",friend,seed)
+    frfr = list(set(friends2friends) & set(frfr))
+    frfo = list(set(friends2followers) & set(frfo))
+    ans = list(set(followers) & set(friends) & set(friends2followers) & set(friends2followers))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_5.pickle'):  Mypickle.save(DIR, frfr, seed + '_5')
+  if not os.path.isfile(DIR + seed + '_3.pickle'):  Mypickle.save(DIR, frfo, seed + '_3')
+  return match_list
+
+def basic_pass34(seed):
+
+  match_list = []
+
+
+  friends, followers = update("all",seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  mutual = list(set(followers) & set(friends))
+
+  for m in mutual:
+    mutual2followers = update("followers_only", m,seed)
+
+    ans = list(set(mutual2followers) & set(mutual))
+
+  match_list = list(set(match_list) | set(ans))
+
+  return match_list
+
+def basic_pass35(seed):
+
+  match_list = []
+
+
+  friends, followers = update("all",seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  mutual = list(set(followers) & set(friends))
+
+  for m in mutual:
+    mutual2friends = update("friends_only", m,seed)
+
+    ans = list(set(mutual2friends) & set(mutual))
+
+  match_list = list(set(match_list) | set(ans))
+
+  return match_list
+
+def basic_pass36(seed):
+
+  match_list = []
+  fofo = []
+  fofr = []
+
+  followers = update("followers_only", seed,seed)
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  for follower in followers:
+    followers2friends, followers2followers = update("all",follower,seed)
+    fofr = list(set(followers2friends) & set(fofr))
+    fofo = list(set(followers2followers) & set(fofo))
+    ans = list(set(followers2friends) & set(followers2followers) & set(followers) & set(friends))
+    match_list = list(set(match_list) | set(ans))
+
+  if not os.path.isfile(DIR + seed + '_4.pickle'):  Mypickle.save(DIR, fofr, seed + '_4')
+  if not os.path.isfile(DIR + seed + '_6.pickle'):  Mypickle.save(DIR, fofo, seed + '_6')
+  return match_list
+
+def basic_pass37(seed):
+
+  match_list = []
+
+
+  friends, followers = update("all",seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
+
+  mutual = list(set(followers) & set(friends))
+
+  for m in mutual:
+    mutual2friends, mutual2followers = update("all", m,seed)
+
+    ans = list(set(mutual2friends) & set(mutual2followers) & set(followers))
+
+  match_list = list(set(match_list) | set(ans))
+
+  return match_list
+
+def basic_pass38(seed):
 
     match_list = []
-    match_seeds = {}
 
-    for seed in seeds:
-      friends, followers = update("all",seed)
-      if len(friends) == 0 or len(followers) == 0: continue
 
-      mutual = list(set(followers) & set(friends))
-      mutual = list(set(mutual) - set(seeds))
-
-      for m in mutual:
-        mutual2friends = update("friends_only", m)
-
-        ans = list(set(mutual2friends) & set(friends))
-        ans = list(set(ans) - set(seeds))
-
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-    return match_list, match_seeds
-
-def basic_pass31(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    followers = update("followers_only", seed)
-    if len(followers) == 0: continue
-
-    for follower in followers:
-      followers2friends, followers2followers = update("all",follower)
-      if len(followers2followers) == 0 or len(followers2friends) == 0: continue
-
-      ans = list(set(followers2friends) & set(followers2followers) & set(followers))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass32(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers = update("all", seed)
-    if len(followers) == 0: continue
-
-    for follower in followers:
-      followers2friends, followers2followers = update("all",follower)
-      if len(followers2followers) == 0 or len(followers2friends) == 0: continue
-
-      ans = list(set(followers2friends) & set(followers2followers) & set(friends))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass33(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers  = update("all", seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    for friend in friends:
-      friends2friends, friends2followers = update("all",friend)
-      if len(friends2followers) == 0 or len(friends2friends): continue
-
-      ans = list(set(followers) & set(friends) & set(friends2followers) & set(friends2followers))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass34(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers = update("all",seed)
-    if len(friends) == 0 or len(followers) == 0: continue
+    friends, followers = update("all",seed,seed)
+    if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+    if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
 
     mutual = list(set(followers) & set(friends))
-    mutual = list(set(mutual) - set(seeds))
 
     for m in mutual:
-      mutual2followers = update("followers_only", m)
+      mutual2friends, mutual2followers = update("all", m,seed)
 
-      ans = list(set(mutual2followers) & set(mutual))
-      ans = list(set(ans) - set(seeds))
-
-    match_list = list(set(match_list) | set(ans))
-    match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass35(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers = update("all",seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    mutual = list(set(followers) & set(friends))
-    mutual = list(set(mutual) - set(seeds))
-
-    for m in mutual:
-      mutual2friends = update("friends_only", m)
-
-      ans = list(set(mutual2friends) & set(mutual))
-      ans = list(set(ans) - set(seeds))
+      ans = list(set(mutual2friends) & set(mutual2followers) & set(friends))
 
     match_list = list(set(match_list) | set(ans))
-    match_seeds = match(seed, ans, match_seeds)
 
-  return match_list, match_seeds
+    return match_list
 
-def basic_pass36(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    followers = update("followers_only", seed)
-    if len(followers) == 0: continue
-
-    for follower in followers:
-      followers2friends, followers2followers = update("all",follower)
-      if len(followers2followers) == 0 or len(followers2friends) == 0: continue
-
-      ans = list(set(followers2friends) & set(followers2followers) & set(followers) & set(friends))
-      ans = list(set(ans) - set(seeds))
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
-
-def basic_pass37(seeds):
+def basic_pass39(seed):
 
   match_list = []
-  match_seeds = {}
 
-  for seed in seeds:
-    friends, followers = update("all",seed)
-    if len(friends) == 0 or len(followers) == 0: continue
 
-    mutual = list(set(followers) & set(friends))
-    mutual = list(set(mutual) - set(seeds))
+  friends, followers = update("all",seed,seed)
+  if not os.path.isfile(DIR + seed + '_1.pickle'):  Mypickle.save(DIR, friends, seed + '_1')
+  if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
 
-    for m in mutual:
-      mutual2friends, mutual2followers = update("all", m)
+  mutual = list(set(followers) & set(friends))
 
-      ans = list(set(mutual2friends) & set(mutual2followers) & set(followers))
-      ans = list(set(ans) - set(seeds))
+  for m in mutual:
+    mutual2friends, mutual2followers = update("all", m,seed)
 
-    match_list = list(set(match_list) | set(ans))
-    match_seeds = match(seed, ans, match_seeds)
+    ans = list(set(mutual2friends) & set(mutual2followers) & set(mutual))
 
-  return match_list, match_seeds
+  match_list = list(set(match_list) | set(ans))
 
-  def basic_pass38(seeds):
-
-    match_list = []
-    match_seeds = {}
-
-    for seed in seeds:
-      friends, followers = update("all",seed)
-      if len(friends) == 0 or len(followers) == 0: continue
-
-      mutual = list(set(followers) & set(friends))
-      mutual = list(set(mutual) - set(seeds))
-
-      for m in mutual:
-        mutual2friends, mutual2followers = update("all", m)
-
-        ans = list(set(mutual2friends) & set(mutual2followers) & set(friends))
-        ans = list(set(ans) - set(seeds))
-
-      match_list = list(set(match_list) | set(ans))
-      match_seeds = match(seed, ans, match_seeds)
-
-    return match_list, match_seeds
-
-def basic_pass39(seeds):
-
-  match_list = []
-  match_seeds = {}
-
-  for seed in seeds:
-    friends, followers = update("all",seed)
-    if len(friends) == 0 or len(followers) == 0: continue
-
-    mutual = list(set(followers) & set(friends))
-    mutual = list(set(mutual) - set(seeds))
-
-    for m in mutual:
-      mutual2friends, mutual2followers = update("all", m)
-
-      ans = list(set(mutual2friends) & set(mutual2followers) & set(mutual))
-      ans = list(set(ans) - set(seeds))
-
-    match_list = list(set(match_list) | set(ans))
-    match_seeds = match(seed, ans, match_seeds)
-
-  return match_list, match_seeds
+  return match_list
 
 def join_dic(dics):
   ans = {}

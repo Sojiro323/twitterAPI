@@ -10,7 +10,7 @@ def check(userID):
 
     conn = prepare.init()
     
-    with c = conn.cursor()
+    c = conn.cursor()
     sql = "SELECT state from checked_list where userID = " + userID
     c.execute(sql)
     
@@ -27,6 +27,7 @@ def select(sql):
     c = conn.cursor()
     c.execute(sql)
     result = c.fetchall()
+    conn.commit()
     c.close()
     conn.close()
     return result

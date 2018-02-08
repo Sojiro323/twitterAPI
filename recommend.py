@@ -31,7 +31,7 @@ def recommendation(d_flag, pattern, seeds, seeds_score):
   else: import graph_old as graph
 
   print("pattern : {0} \n seeds : {1}".format(pattern, seeds))
-  if d_flag: match_list, match_seeds = graph.get_match(pattern, seeds)
+  if d_flag: match_list, match_seeds = graph.get_match("1", seeds)
   else: match_list, match_seeds = graph_old.get_match(pattern, seeds)
   print('match_list_lengh : {0}'.format(len(match_list)))
 
@@ -57,33 +57,37 @@ def recommendation(d_flag, pattern, seeds, seeds_score):
 
 def ranking(pattern, match_list, match_seeds, seeds_score):
 
+  import numpy as np
   seeds = seeds_score.keys()
   path_score = {}
   ranking_list = []
+  count = 0
+  parameter = 0.5
+  take = 300
 
   for k,v in seeds_score.items():
     path_score[k] = v[pattern][0]
 
-  for t in range(len(seeds), 0, -1):
-    combinations = []
-    temp = list(itertools.combinations(seeds, t))
-    for tem in temp: combinations.append(list(tem))
-    for i, com in enumerate(combinations):
-      sum_score = 0.0
-      for c in com: sum_score += path_score[c]
-      combinations[i].append(sum_score)
-    combinations.sort(key=itemgetter(-1))
+  for u in match_list:
+      s = 0.0
+      for seeds in match_seeds[u]: s += path_score[seeds]
+      s = (len(match_seeds[u]) * parameter) + ((1-parameter) * s) / len(seeds)
+      if count < take:
+          ranking_list.append([u,s])
+          count+=1
+      else:
+          if count == take:
+              np_list = np.array(ranking_list)
+              i = np_list.argmin(0)[1]
+              count = take + 1
+          if float(np_list[i][1]) < s:
+              np_list[i] = [u,s]
+              i = np_list.argmin(0)[1]
 
-    while(len(combinations) > 0):
-      c = combinations.pop(-1)[:-1]
-      for match in match_list[:]:
-        if len(set(c).symmetric_difference(match_seeds[match])) == 0:
-          ranking_list.append(match)
-          match_list.remove(match)
-    if t == len(seeds): print("best combination is \n {0}".format(ranking_list))
-    if len(ranking_list) == 100: break
-
-  return ranking_list
+  vs = np_list.tolist()
+  vs.sort(key=lambda x:x[1])
+  vs.reverse()
+  return vs
 
 
 
@@ -93,16 +97,17 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
   for user in match_list:
 
-    if len(database.select('SELECT * from query where userID = \'' + user + '\' AND queryID = \'' + query_ID + '\'')) != 0: continue
+    if len(database.select('SELECT * from query where userID = \'' + user[0] + '\' AND queryID = \'' + query_ID + '\'')) != 0: continue
 
-    responce = twitter.show(user)
+    responce = twitter.show(user[0])
     if responce.status_code != 200:
       print("Error code: %d" %(responce.status_code))
       sys.exit()
 
     ress = json.loads(responce.text)
-    print("https://twitter.com/intent/user?user_id=" + user)
-    print("\nuserID:{0}\nusername:{1}\nprofile:{2}\n".format(user,ress["name"],ress["description"]))
+    print("score : {0}".format(user[1]))
+    print("https://twitter.com/intent/user?user_id=" + user[0])
+    print("\nuserID:{0}\nusername:{1}\nprofile:{2}\n".format(user[0],ress["name"],ress["description"]))
 
     webbrowser_flag = False
     while(1):
@@ -122,24 +127,24 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
       if input_flag == "true":
         ID = database.select("SELECT MAX(ID) from query where queryID = \'" + query_ID + "\'")
-        database.insert("query", (str(int(ID[0][0]) + 1), user, query_ID, "2"))
+        database.insert("query", (str(int(ID[0][0]) + 1), user[0], query_ID, "2"))
         break
       elif input_flag == "false":
         ID = database.select("SELECT MAX(ID) from query where queryID = \'" + query_ID + "\'")
-        database.insert("query", (str(int(ID[0][0]) + 1), user, query_ID, "0"))
+        database.insert("query", (str(int(ID[0][0]) + 1), user[0], query_ID, "0"))
         break
       elif input_flag == "half":
         ID = database.select("SELECT MAX(ID) from query where queryID = \'" + query_ID + "\'")
-        Mydatavase.insert("query", (str(int(ID[0][0]) + 1), user, query_ID, "1"))
+        Mydatavase.insert("query", (str(int(ID[0][0]) + 1), user[0], query_ID, "1"))
         break
       else: print("input again!!")
 
     print("{0} people checked!!".format(int(ID[0][0])+1))
-    seeds = match_seeds[user]
+    seeds = match_seeds[user[0]]
     if input_flag == "true":
       seeds_score = update_score(input_flag, pattern, seeds, seeds_score)
-      seeds_score = init_score(user, seeds_score)
-      match_users.append(user)
+      seeds_score = init_score(user[0], seeds_score)
+      match_users.append(user[0])
     else:
       seeds_score = update_score(input_flag, pattern, seeds, seeds_score)
 

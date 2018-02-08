@@ -12,9 +12,7 @@ def init():
     #pymysql.install_as_MySQLdb()
     
     password = load_pass()
-    conn = sql.connect(user=password['database_user'],
+    return sql.connect(user=password['database_user'],
         host=password['ip'],
         password=password['database_password'],
         db=password['dbname'])
-
-    return conn
