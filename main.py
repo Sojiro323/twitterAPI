@@ -1,19 +1,19 @@
 # -*- coding:utf-8 -*-
 from connect import database
+from mymodule import Myyaml
 import recommend
 
 ### Execute
 if __name__ == "__main__":
 
+  seeds = ['125056081','2294473200','761272495']
   seeds_list = seeds
   start_num = len(seeds_list)
   path = "../query/"
   start_score = 0.6
   query_ID = "3"
-  seeds = ['125056081','2294473200','761272495']
-  get_num = 10
-  path_pattern = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24",
-  "25","26","27","28","29","30","31","32","33","34","35","36","37","38","39"]
+  get_num = 30
+  path_pattern = Myyaml.load("path")["path_com"]["39"]
   
   while(1):
     print("input using database : old or new")
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     from mymodule import Mypickle
     seeds_score = Mypickle.load(path, "seeds_score_" + query_ID)
     _, next_pattern = recommend.passcheck_continue("0", seeds_score)
-    seeds_list = seeds_score.keys()
+    seeds_list = [i for i in seeds_score.keys()]
 
   else:
     seed_score = {p:[start_score,0,0,0] for p in path_pattern}  #[precision, good, bad]

@@ -1,5 +1,7 @@
 from requests_oauthlib import OAuth1Session
 from requests.exceptions import ConnectionError
+import datetime
+import time
 from . import database
 
 
@@ -118,15 +120,12 @@ def users(keyword, page, count):
 def insert2database(ID, api_name, responce):
     limit = responce.headers['x-rate-limit-remaining'] if 'x-rate-limit-remaining' in responce.headers else 0
     now = time.strftime('%Y-%m-%d %H:%M:%S')
-    db_connect.update('api_limit', ((ID, str(limit), now, api_name)))
+    database.update('api_limit', ((ID, str(limit), now, api_name)))
 
 
 def limit_check(api_name):
 
-    import datetime
-    import time
-
-    SQLs = db_connect.select('select id, limited, last_use from api_limit where api_name = \'' + api_name + '\'')
+    SQLs = database.select('select id, limited, last_use from api_limit where api_name = \'' + api_name + '\'')
 
     now = time.strftime('%Y-%m-%d %H:%M:%S')
     now_time = datetime.datetime(int(now[0:4]),int(now[5:7]),int(now[8:10]),int(now[11:13]),int(now[14:16]),int(now[17:19]))
@@ -144,7 +143,7 @@ def limit_check(api_name):
 
     if ID == "":
         print("start sleep")
-        SQLs = db_connect.select('select id, last_use from api_limit where api_name = \'' + api_name + '\'')
+        SQLs = database.select('select id, last_use from api_limit where api_name = \'' + api_name + '\'')
         recent = datetime.datetime(2020,1,1,00,00,00)
         for SQL in SQLs:
           use = SQL[1]

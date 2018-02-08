@@ -23,14 +23,14 @@ path_pattern = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15
 
 
 #seeds = ["2294473200","761272495"]
-get_num = 10
+get_num = 30
 
 
 def recommendation(d_flag, pattern, seeds, seeds_score):
   if d_flag: import graph
   else: import graph_old as graph
 
-  print("pattern : {0}".format(pattern))
+  print("pattern : {0} \n seeds : {1}".format(pattern, seeds))
   if d_flag: match_list, match_seeds = graph.get_match(pattern, seeds)
   else: match_list, match_seeds = graph_old.get_match(pattern, seeds)
   print('match_list_lengh : {0}'.format(len(match_list)))
@@ -41,15 +41,16 @@ def recommendation(d_flag, pattern, seeds, seeds_score):
     match_list = ranking(pattern, match_list, match_seeds, seeds_score)
     match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
 
+    print("patern next_pattern : {0} {1}".format(pattern, next_pattern))
     while(pattern == next_pattern):
       add_match_list, add_match_seeds = graph.get_match(pattern, match_users)
       match_seeds = graph.join_dic([match_seeds, add_match_seeds])
       match_list = list(set(match_list) & set(add_match_list))
       match_list = ranking(pattern, match_list, match_seeds, seeds_score)
+      print('match_list_lengh : {0}'.format(len(match_list)))
       match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
-
-    print("now seeds : {0}".format(seeds))
-    seeds = seeds + match_users
+      print("now seeds : {0}".format(seeds))
+      seeds = seeds + match_users
 
   return next_pattern, seeds, seeds_score
 
@@ -167,6 +168,7 @@ def init_score(user, seeds_score):
 def update_score(flag, pattern, match_seeds, seeds_score):
 
   from mymodule import Myyaml
+  match_seeds = list(set(match_seeds))
   path_com = Myyaml.load("path")["path_com"]
   p_com = path_com[pattern]
   print("UPDATE SCORE : {0}".format(match_seeds))

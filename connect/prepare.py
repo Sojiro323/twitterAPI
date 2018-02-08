@@ -1,4 +1,5 @@
 # -- coding: utf-8 --
+
 def load_pass():
     import yaml
     f = open('../password/database.yml', 'r+')
@@ -6,9 +7,12 @@ def load_pass():
     return password
 
 def init():
-    import MySQLdb
+    import MySQLdb as sql
+    #import pymysql as sql
+    #pymysql.install_as_MySQLdb()
+    
     password = load_pass()
-    conn = MySQLdb.connect(user=password['database_user'],
+    conn = sql.connect(user=password['database_user'],
         host=password['ip'],
         password=password['database_password'],
         db=password['dbname'])

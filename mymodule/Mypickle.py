@@ -44,7 +44,7 @@ def save_name(path,*files):
             pickle.dump(f, p)
         print('{0}:{1}'.format(name, len(f)))
 
-def save(path, file, name):
+def save(path, f, name):
     print("\nsave pickle...")
 
     if path[-1] != "/":path = path + "/"

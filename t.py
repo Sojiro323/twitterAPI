@@ -1,6 +1,4 @@
 # coding: utf-8
-#import pymysql
-#pymysql.install_as_MySQLdb()
 import MySQLdb
 from . import prepare
 
@@ -9,14 +7,12 @@ from . import prepare
 def check(userID):
 
     conn = prepare.init()
-    
-    with c = conn.cursor()
+    c = conn.cursor()
     sql = "SELECT state from checked_list where userID = " + userID
     c.execute(sql)
-    
     result = c.fetchall()
     c.close()
-
+    conn.close()
     if len(result) == 0: return '***'
     return result[0][0]
 
