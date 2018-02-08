@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
-from mymodule import Server_Mydatabase
+from connect import database
 import os
-import sys
 import math
 
 '''global variable'''
@@ -12,11 +11,11 @@ def nDCG(queryID):
   rec_list = []
   ideal_list = []
 
-  SQL = Server_Mydatabase.select("SELECT ID, result from query where queryID = \'" + queryID + "\' and result <> 'None' order by ID")
-  
-  true = len(Server_Mydatabase.select("SELECT * from query where queryID = \'" + queryID + "\' and result = '2'"))
-  half = len(Server_Mydatabase.select("SELECT * from query where queryID = \'" + queryID + "\' and result = '1'"))
-  false = len(Server_Mydatabase.select("SELECT * from query where queryID = \'" + queryID + "\' and result = '0'"))
+  SQL = database.select("SELECT ID, result from query where queryID = \'" + queryID + "\' and result <> 'None' order by ID")
+
+  true = len(database.select("SELECT * from query where queryID = \'" + queryID + "\' and result = '2'"))
+  half = len(database.select("SELECT * from query where queryID = \'" + queryID + "\' and result = '1'"))
+  false = len(database.select("SELECT * from query where queryID = \'" + queryID + "\' and result = '0'"))
 
   for user in SQL: rec_list.append(user[1])
 
@@ -30,7 +29,7 @@ def nDCG(queryID):
 
 
 def DCG(users):
-  
+
   ans = 0.0
 
   for i, user in enumerate(users):
@@ -54,23 +53,23 @@ def AP(rec_list):
 
 
 if __name__ == "__main__":
-  
+
   while(1):
     print("input queryID")
-    
+
     queryID = input('>>> ')
-    
-    if len(Server_Mydatabase.select("SELECT * from query where queryID = \'" + queryID + "\'")) != 0: break
+
+    if len(database.select("SELECT * from query where queryID = \'" + queryID + "\'")) != 0: break
     else: print("input again!!")
 
   for method in methods:
     add_queryID = method + queryID
-    if len(Server_Mydatabase.select("SELECT * from query where queryID = \'" + add_queryID + "\'")) == 0: continue
-    
+    if len(database.select("SELECT * from query where queryID = \'" + add_queryID + "\'")) == 0: continue
+
     '''calucrate score'''
     nDCG_score, rec_list, ideal_list = nDCG(add_queryID)
     AP_score, p_index = AP(rec_list)
-    
+
     '''output nDCG'''
     texts = [str(nDCG_score), "\nrecommendation \t ideal"]
     for rec, ideal in zip(rec_list, ideal_list): texts.append("\n" + str(rec) + '\t' + str(ideal))
@@ -90,5 +89,5 @@ if __name__ == "__main__":
     f = open(path + add_queryID + '.txt', 'a')
     f.write(title + "\nnDCG : " + str(nDCG_score) + "\nAP : " + str(AP_score) + "\n\n")
     f.close()
-    
+
     print(add_queryID + ".txt output !!")

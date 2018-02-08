@@ -1,16 +1,13 @@
 # coding: utf-8
-from sshtunnel import SSHTunnelForwarder
 import MySQLdb
-import sys,os
+import os
 import yaml
 import gzip
-import os
 
 f = open('../password/database.yml', 'r+')
 password = yaml.load(f)
 
 def insert(values):
-  
 
   conn = MySQLdb.connect(user=password['database_user'],
     host=password['ip'],
@@ -35,7 +32,7 @@ friends_path = "../order_friend_ja_inter_zip/"
 
 while(1):
   print("input friend or follower")
-    
+
   d = input('>>> ')
 
   if d == "friend" or d == "follower": break

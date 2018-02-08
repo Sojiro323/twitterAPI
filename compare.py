@@ -1,15 +1,12 @@
 # -*- coding:utf-8 -*-
+from connect import database
+from connect import twitter
 from mymodule import Mail
-from mymodule import MytwitterAPI
-from mymodule import Mypath
-from mymodule import Server_Mydatabase
+import graph
 import json
-import os
 import sys
-import random
 import itertools
 import urllib.parse
-from operator import itemgetter
 
 
 '''global variable'''
@@ -20,10 +17,10 @@ path_index = {"friend" : "1", "follower" : "2", "mutual" : "7"}
 judg_dic = {"true" : "2", "false" : "0", "half" : "1"}
 
 def input_database(judg, queryID, user):
-  
-  ID = Server_Mydatabase.select("SELECT MAX(ID) from query where queryID = \'" + queryID + "\'")[0][0]
-  if ID is None: ID = 0 
-  Server_Mydatabase.insert("query", (ID + 1, user, queryID, judg_dic[judg]))
+
+  ID = database.select("SELECT MAX(ID) from query where queryID = \'" + queryID + "\'")[0][0]
+  if ID is None: ID = 0
+  database.insert("query", (ID + 1, user, queryID, judg_dic[judg]))
   print("{0} people checked!!".format(ID + 1))
 
 
@@ -35,7 +32,7 @@ def ranking(seeds, match_list, match_seeds):
 
   for t in range(len(seeds), 0, -1):
     temp = list(itertools.combinations(seeds, t))
-    for te in temp: combinations.append(list(te)) 
+    for te in temp: combinations.append(list(te))
 
   while(len(combinations) > 0):
     c = combinations.pop(0)
@@ -49,11 +46,11 @@ def ranking(seeds, match_list, match_seeds):
 
 
 def tweet(keyword, count):
-  
+
   match_list = []
   tweets = []
 
-  responce = MytwitterAPI.tweets(keyword, count)
+  responce = twitter.tweets(keyword, count)
 
   limit = int(responce.headers['x-rate-limit-remaining']) if 'x-rate-limit-remaining' in responce.headers else 0
   if responce.status_code != 200:
@@ -71,7 +68,7 @@ def tweet(keyword, count):
 
 
 def user(keyword, count):
-  
+
   match_list = []
   tweets = []
   if count // 20 == 0: pages = 1
@@ -82,7 +79,7 @@ def user(keyword, count):
 
   for i in range(pages):
 
-    responce = MytwitterAPI.users(keyword, i+1, 20)
+    responce = twitter.users(keyword, i+1, 20)
 
     limit = int(responce.headers['x-rate-limit-remaining']) if 'x-rate-limit-remaining' in responce.headers else 0
     if responce.status_code != 200:
@@ -94,32 +91,32 @@ def user(keyword, count):
     ress = json.loads(responce.text)
     for res in ress:
       if len(match_list) < count: match_list.append(res["id_str"])
-  
+
   return match_list
 
 
 if __name__ == "__main__":
 
   while(1):
-    print("input queryID")i
-    
+    print("input queryID")
+
     queryID = input('>>> ')
 
-    if len(Server_Mydatabase.select("SELECT * from query where queryID = \'" + queryID + "\'")) != 0: break
+    if len(database.select("SELECT * from query where queryID = \'" + queryID + "\'")) != 0: break
     else: print("\ninput again!!\n\n")
 
-  SQL = Server_Mydatabase.select("SELECT userID from query where queryID = \'" + queryID + "\'" + "and ID = \'0\'")
-  
+  SQL = database.select("SELECT userID from query where queryID = \'" + queryID + "\'" + "and ID = \'0\'")
+
   seeds = [s[0] for s in SQL]
-  
+
   print("seeds : {0}".format(seeds))
 
   match_user = []
 
 
   while(1):
-    print("input using comparative method : {0}".format(methods[:-3]))
-    
+    print("input using comparative method : {0}".format(methods[:-2]))
+
     method = input('>>> ')
 
     if method in methods[:3]: break
@@ -133,21 +130,21 @@ if __name__ == "__main__":
 
   while(1):
     print("input using database : old or new")
-    
+
     d = input('>>> ')
 
-    if d == "new": 
+    if d == "new":
       d_flag = True
       break
-    elif d == "old": 
+    elif d == "old":
       d_flag = False
       break
     else: "\ninput again!!\n\n"
 
 
   if method in methods[:-1]:
-    if d_flag == False: from mymodule import old_Mypath as Mypath
-    match_list, match_seeds = Mypath.get_match(path_index[method], seeds)
+    if d_flag == False: import graph_old as graph
+    match_list, match_seeds = graph.get_match(path_index[method], seeds)
     match_user_profile = []
     #match_list = ranking(seeds, match_list, match_seeds)
   elif method == "tweet":
@@ -158,12 +155,12 @@ if __name__ == "__main__":
   queryID = method + "_" + queryID
 
   print("len(match_list) = {0}".format(len(match_list)))
-  
-  for user in match_list:
-    
-    if len(Server_Mydatabase.select("SELECT * from query where queryID = \'" + queryID + "\'" + "and userID = \'" + user + "\'") != 0): continue
 
-    responce = MytwitterAPI.show(user)
+  for user in match_list:
+
+    if len(database.select("SELECT * from query where queryID = \'" + queryID + "\'" + "and userID = \'" + user + "\'") != 0): continue
+
+    responce = twitter.show(user)
     if responce.status_code != 200:
       print("Error code: %d" %(responce.status_code))
       sys.exit()
@@ -171,16 +168,16 @@ if __name__ == "__main__":
     ress = json.loads(responce.text)
     print("\nuserID:{0}\nusername:{1}\nprofile:{2}".format(user,ress["name"],ress["description"]))
     if method == "tweet": print("tweets\n{0}".format(_[match_list.index(user)]))
-    
+
     while(1):
       print("\ninput : {0}".format(judg_dic.keys()))
       judg = input('>>>  ')
-      if method in methods[:3]: 
+      if method in methods[:3]:
         print("\ninput profile : {0}".format(judg_dic.keys()))
         judg_profile = input('>>>  ')
 
 
-      if judg in judg_dic: 
+      if judg in judg_dic:
         input_database(judg, queryID, user)
         if method in methods[:3]: input_database(judg_profile, "pro_"+queryID, user)
         break
@@ -194,8 +191,8 @@ if __name__ == "__main__":
         match_user_profile.append(user)
 
     if method in methods[:3]:
-      if len(match_user) >= get_num and len(match_user_profile) >= get_num: break  
+      if len(match_user) >= get_num and len(match_user_profile) >= get_num: break
     else:
-      if len(match_user) == get_num: break  
+      if len(match_user) == get_num: break
 
   print("end comparative method!!")

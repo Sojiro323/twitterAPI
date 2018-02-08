@@ -32,7 +32,7 @@ def load(path, files):
 
     return return_files
 
-def save(path,*files):
+def save_name(path,*files):
     print("\nsave pickle...")
 
     if path[-1] != "/":path = path + "/"
@@ -43,3 +43,13 @@ def save(path,*files):
         with open(name, mode='wb') as p:
             pickle.dump(f, p)
         print('{0}:{1}'.format(name, len(f)))
+
+def save(path, file, name):
+    print("\nsave pickle...")
+
+    if path[-1] != "/":path = path + "/"
+
+    name = path + name + ".pickle"
+    with open(name, mode='wb') as p:
+        pickle.dump(f, p)
+    print('{0}:{1}'.format(name, len(f)))
