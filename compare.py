@@ -13,9 +13,9 @@ from operator import itemgetter
 
 
 '''global variable'''
-get_num = 10
+get_num = 30
 
-methods = ["friend", "follower", "mutual", "tweet", "profile"]
+methods = ["friend", "follower", "mutual", "tweet" , "profile"]
 path_index = {"friend" : "1", "follower" : "2", "mutual" : "7"}
 judg_dic = {"true" : "2", "false" : "0", "half" : "1"}
 
@@ -118,7 +118,7 @@ if __name__ == "__main__":
 
 
   while(1):
-    print("input using comparative method : {0}".format(methods))
+    print("input using comparative method : {0}".format(methods[:-3]))
     
     method = input('>>> ')
 
@@ -131,14 +131,29 @@ if __name__ == "__main__":
       break
     else: "\ninput again!!\n\n"
 
+  while(1):
+    print("input using database : old or new")
+    
+    d = input('>>> ')
 
-  if method in methods[:3]:
+    if d == "new": 
+      d_flag = True
+      break
+    elif d == "old": 
+      d_flag = False
+      break
+    else: "\ninput again!!\n\n"
+
+
+  if method in methods[:-1]:
+    if d_flag == False: from mymodule import old_Mypath as Mypath
     match_list, match_seeds = Mypath.get_match(path_index[method], seeds)
+    match_user_profile = []
     #match_list = ranking(seeds, match_list, match_seeds)
   elif method == "tweet":
     match_list, _ = tweet(keyword, count)
-  elif method  == "profile":
-    match_list = user(keyword, count)
+  #elif:
+  #  match_list = user(keyword, method)
 
   queryID = method + "_" + queryID
 
@@ -160,16 +175,27 @@ if __name__ == "__main__":
     while(1):
       print("\ninput : {0}".format(judg_dic.keys()))
       judg = input('>>>  ')
+      if method in methods[:3]: 
+        print("\ninput profile : {0}".format(judg_dic.keys()))
+        judg_profile = input('>>>  ')
+
 
       if judg in judg_dic: 
         input_database(judg, queryID, user)
+        if method in methods[:3]: input_database(judg_profile, "pro_"+queryID, user)
         break
       else: print("\ninput again!!\n\n")
 
     if judg == "true":
       match_user.append(user)
       print("now match_user : {0}".format(match_user))
+    if method in methods[:3]:
+      if judg_profile == 'true':
+        match_user_profile.append(user)
 
-    if len(match_user) == get_num: break  
+    if method in methods[:3]:
+      if len(match_user) >= get_num and len(match_user_profile) >= get_num: break  
+    else:
+      if len(match_user) == get_num: break  
 
   print("end comparative method!!")

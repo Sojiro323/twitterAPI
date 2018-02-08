@@ -17,7 +17,7 @@ import pickle
 '''global variable'''
 path = "../query/"
 start_score = 0.6
-query_ID = "2"
+query_ID = "3"
 
 path_pattern = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24",
 "25","26","27","28","29","30","31","32","33","34","35","36","37","38","39"]
@@ -63,11 +63,13 @@ path_com = {
 "38":["1","3","4","5","6","9","10","11","13","14","15","17","19","24","26","28","30","32","38"],
 "39":path_pattern
 }
-seeds = ["2294473200","761272495"]
+#seeds = ["2294473200","761272495"]
 get_num = 10
 
 
 def recommendation(d_flag, pattern, seeds, seeds_score):
+  if d_flag: from mymodule import Mypath
+  else: from mymodule imort old_Mypath as Mypath
 
   print("pattern : {0}".format(pattern))
   if d_flag: match_list, match_seeds = Mypath.get_match(pattern, seeds)
@@ -81,9 +83,6 @@ def recommendation(d_flag, pattern, seeds, seeds_score):
     match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
 
     while(pattern == next_pattern):
-      if d_flag: from mymodule import Mypath
-      else: from mymodule imort old_Mypath as Mypath
-      
       add_match_list, add_match_seeds = Mypath.get_match(pattern, match_users)
       match_seeds = Mypath.join_dic([match_seeds, add_match_seeds])
       match_list = list(set(match_list) & set(add_match_list))
@@ -142,6 +141,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
       sys.exit()
 
     ress = json.loads(responce.text)
+    print("https://twitter.com/intent/user?user_id=" + user)
     print("\nuserID:{0}\nusername:{1}\nprofile:{2}\n".format(user,ress["name"],ress["description"]))
 
     webbrowser_flag = False
@@ -254,7 +254,7 @@ if __name__ == "__main__":
   start_num = len(seeds_list)
 
   while(1):
-    print("input using database : old or new"))
+    print("input using database : old or new")
     
     d = input('>>> ')
 
@@ -280,6 +280,9 @@ if __name__ == "__main__":
     for seed in seeds_list:
       seed_score = {p:[start_score,0,0,0] for p in path_pattern}  #[precision, good, bad]
       seeds_score[seed] = seed_score
+
+    if d_flag: from mymodule import Mypath
+    else: from mymodule import old_Mypath as Mypath
 
     next_pattern = random.choice(path_pattern[0:6])
     for seed in seeds:Server_Mydatabase.insert("query", (0, seed, query_ID, "None"))

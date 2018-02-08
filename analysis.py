@@ -4,7 +4,7 @@ from mymodule import Server_Mydatabase
 import pickle
 import os
 import sys
-
+import numpy as np
 
 path_com = {
 1:[1],
@@ -52,7 +52,7 @@ path_com = {
 
 def check(node):
 
-  for v in node:  
+  for k, v in node.items():  
     if len(v) != 0: return True
   return False
 
@@ -60,20 +60,18 @@ def check(node):
 
 def set_check(node, opponent, p_dic, path_set):
 
-  SET = []
   users = {}
   
   for k, v in node.items():
     if k == "friend" or k == "follower": continue
     for i, u in enumerate(v[:]):
       if u[1] == opponent:
-        if u[0] not in users: users[u[0]] = []
-        users[u[0]].append(p_dic[k])
-        v.pop(i)
+        if u[0] not in users: users[u[0]] = path_set
+        if p_dic[k]  not in users[u[0]]: users[u[0]].append(p_dic[k]) 
+        v = [a for a in v if u != a]
 
-  for user in users: SET.append(path_set + user)
 
-  return node, SET
+  return users.values()
 
 
 
@@ -88,7 +86,7 @@ if __name__ == "__main__":
     else: print("\ninput again!!\n\n")
 
   while(1):
-    print("input using database : old or new"))
+    print("input using database : old or new")
     
     d = input('>>> ')
 
@@ -214,54 +212,72 @@ if __name__ == "__main__":
       print("save pickle : {0}".format(len(node2node)))
       pickle.dump(node2node, p)
 
-  gpaph_count = [0] * 39
-  p_dic = {"friend":1, "follower":2, "friend2follower":3, "follower2friend":4, "friend2follower":5, "follower2follower":6}
+  graph_count = [0] * 39
+  p_dic = {"friend":1, "follower":2, "friend2follower":3, "follower2friend":4, "friend2friend":5, "follower2follower":6}
 
   for user in (seeds + match):
 
     node = node2node[user] #dic
-    path_set = []
 
+    print("{0} : start!!".format(user))
     while(check(node)):
 
       while(len(node["friend"]) != 0 or len(node["follower"]) != 0):
 
+        path_set = []
+        
         if len(node["friend"]) != 0:
           opponent = node["friend"].pop(0)
           path_set.append(1)
           if opponent in node["follower"]:
             path_set.append(2)
             node["follower"].pop(node["follower"].index(opponent))
-        else: 
+        elif len(node["follower"]) != 0: 
           opponent = node["follower"].pop(0)
           path_set.append(2)
 
-        node, path_set = set_check(node, opponent, p_dic, path_set)
-        print("1 or 2 in set : {0}".format(path_set))
-        print("graph_count old : {0}".format(graph_count))
+        Path_set = set_check(node, opponent, p_dic, path_set)
+        #print("1 or 2 in set : {0}".format(path_set))
+        #print("graph_count old : {0}".format(graph_count))
 
-        for p in path_set:
-          for k, com in p_com.items():
+        for p in Path_set:
+          for k, com in path_com.items():
             if len(list(set(com) - set(p))) == 0:
-              gpaph_count[k-1] += 1
+              graph_count[k-1] += 1
 
-        print("graph_count now : {0}".format(graph_count))
+        #print("graph_count now : {0}".format(graph_count))
 
-      for k, v in node:
-        if len(v) != 0:
-          opponent = v[1]
+      for v in node.values():
+        for q in v:
+          opponent = q[1]
           break
 
-      node, path_set = set_check(node, opponent, p_dic, [])
-      print("1 or 2 not in set : {0}".format(path_set))
-      print("graph_count old : {0}".format(graph_count))
-
-      for p in path_set:
-        for k, com in p_com.items():
-          if len(list(set(com) - set(p))) == 0:
-            gpaph_count[k-1] += 1
+      Path_set = set_check(node, opponent, p_dic, [])
+      #print("1 or 2 not in set : {0}".format(path_set))
+      #print("graph_count old : {0}".format(graph_count))
       
-      print("graph_count now : {0}".format(graph_count))
+
+      for p in Path_set:
+        for k, com in path_com.items():
+          if len(list(set(com) - set(p))) == 0:
+            graph_count[k-1] += 1
+      
+      for k,vs in node.items():
+        if len(vs) == 0: continue
+        while(1):
+          vv = np.array(node[k])
+          vv = list(vv[:,-1:])
+          for i, v  in enumerate(vv):
+            if opponent == v[0]:
+              node[k].pop(i)
+              break
+          break
+
+
+
+      #print("graph_count now : {0}".format(graph_count))
 
   with open("../query/analysis/" + queryID + "_graph_count.pickle", mode='wb') as p:
     pickle.dump(graph_count, p)
+  print("analysis finish!!")
+  print(graph_count)

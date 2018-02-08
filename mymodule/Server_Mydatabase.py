@@ -1,33 +1,8 @@
 # coding: utf-8
-from sshtunnel import SSHTunnelForwarder
 import MySQLdb
 import sys,os
 import yaml
 
-'''
-# テーブルの作成
-sql = 'create table test (id int, content varchar(32))'
-c.execute(sql)
-print('* testテーブルを作成\n')
-
-# テーブル一覧の取得
-sql = 'show tables'
-c.execute(sql)
-print('===== テーブル一覧 =====')
-print(c.fetchone())
-
-# レコードの削除
-sql = 'delete from test where id=%s'
-c.execute(sql, (2,))
-print('\n* idが2のレコードを削除\n')
-
-# レコードの取得
-sql = 'select * from test'
-c.execute(sql)
-print('===== レコード =====')
-for row in c.fetchall():
-    print('Id:', row[0], 'Content:', row[1])
-'''
 
 def load_pass():
     f = open('../password/database.yml', 'r+')
