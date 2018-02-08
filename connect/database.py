@@ -25,7 +25,6 @@ def select(sql):
     result = c.fetchall()
     c.close()
     conn.close()
-    print(result)
     return result
 
 def update(database, values):
@@ -58,7 +57,6 @@ def insert(database, values):
     else: sql = 'INSERT ignore into result values (%s, %s, %s)'
     if isinstance(values,tuple): c.execute(sql, values)  # 1件のみ
     else: c.executemany(sql, values)    # 複数件
-    print('\n* complete : insert\n')
 
     # データベースへの変更を保存
     conn.commit()

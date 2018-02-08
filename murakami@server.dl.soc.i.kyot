@@ -1,0 +1,8 @@
+# -*- coding:utf-8 -*-
+
+
+def load_pass(yaml):
+    import yaml
+    f = open('../password/' + yaml + '.yml', 'r+')
+    y = yaml.load(f)
+    return y

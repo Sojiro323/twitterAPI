@@ -1057,9 +1057,6 @@ def join_dic(dics):
       else: ans[k] = ans[k] + v
 
   for k, v in ans.items():
-    """s = set()
-    temp = [x for x in v if x in s or s.add(x)]
-    ans[k] = list(set(temp))"""
     ans[k] = list(set(v))
 
   return ans

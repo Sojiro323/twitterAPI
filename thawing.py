@@ -53,9 +53,9 @@ if d == 'friend':
           insert(values[:-1])
           values = ""
           count = 0
-  j = open('follower.txt' , 'a')
-  j.write(f + '\n')
-  j.close()
+    j = open('follower.txt' , 'a')
+    j.write(f + '\n')
+    j.close()
 
 
 else:
@@ -73,6 +73,6 @@ else:
           insert(values[:-1])
           values = ""
           count = 0
-  j = open('friend.txt' , 'a')
-  j.write(f + '\n')
-  j.close()
+    j = open('friend.txt' , 'a')
+    j.write(f + '\n')
+    j.close()
