@@ -14,15 +14,16 @@ path = "../pickle/"
 
 
 ### Functions
-def main(api):
-
+def main(num):
+    seeds = ['75007332','1316932982','261467131']
     #check init or restart
-    if os.path.exists(path + "que_" + api + ".pickle"):
-      que = load_pickle(api)
-    else: que = ["761272495"]
+    if os.path.exists(path + "que_" + seeds[num-1] + "_fr.pickle"):
+      que_fr = load_pickle(path, "que_" + seeds[num-1] + "_fr")
+      que_fo = load_pickle(path, "que_" + seeds[num-1] + "_fo")
+    else:
+      que_fr =  seeds[num-1]
+      que_fr =  seeds[num-1]
 
-    if api == 'friend': api_flag = 'friends_only'
-    else: api_flag = 'followers_only'
     start_time = time.time()
 
     while(1):
@@ -30,22 +31,24 @@ def main(api):
       user = que.pop()
 
       print("user start : {0}".format(user))
-      print(api_flag,user)
-      add = graph.update(api_flag, user)
+      friend,follower = graph.update('all',user,'nnn')
 
-      for ad in add:
-        flag = database.check(ad)
+      for ad_fr in friend:
+        flag = database.check(ad_fr)
         if flag != "protected" and flag != 'NotFound':
-          que.insert(0,ad)
+          que_fr.insert(0,ad_fr)
 
-      print("que : {0}".format(len(que)))
-
+      for ad_fo in follower:
+        flag = database.check(ad_fo)
+        if flag != "protected" and flag != 'NotFound':
+          que_fr.insert(0,ad_fr)
 
 
       end_time = time.time()
 
       if end_time - start_time > 1800:
-        Mypickle.save(path, que, "que_" + api)
+        Mypickle.save(path, que_fr, "que_" + seeds[num-1] + "_fr")
+        Mypickle.save(path, que_fo, "que_" + seeds[num-1] + "_fo")
         start_time = end_time
 
 
@@ -62,11 +65,11 @@ def load_pickle(api):
 ### Execute
 if __name__ == "__main__":
   while(1):
-    print("input friend or follower")
+    print("input 1,2,3")
 
-    api = input('>>> ')
+    num = input('>>> ')
 
-    if api == "friend" or api == 'follower': break
+    if int(num) < 4: break
     else: "\ninput again!!\n\n"
 
-  main(api)
+  main(int(num))

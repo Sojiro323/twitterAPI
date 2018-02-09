@@ -4,58 +4,17 @@ from mymodule import Mypickle
 import os
 import json
 
-path_com = {
-1:[1],
-2:[2],
-3:[3],
-4:[4],
-5:[5],
-6:[6],
-7:[1,2],
-8:[2,3],
-9:[1,3],
-10:[3,5],
-11:[3,6],
-12:[2,4],
-13:[1,4],
-14:[4,5],
-15:[4,6],
-16:[2,5],
-17:[1,5],
-18:[2,6],
-19:[1,6],
-20:[1,2,3],
-21:[1,2,4],
-22:[1,2,5],
-23:[1,2,6],
-24:[3,4,5,6],
-25:[2,3,5],
-26:[1,3,5],
-27:[2,3,6],
-28:[1,3,6],
-29:[2,4,5],
-30:[1,4,5],
-31:[2,4,6],
-32:[1,4,6],
-33:[1,2,3,5],
-34:[1,2,3,6],
-35:[1,2,4,5],
-36:[1,2,4,6],
-37:[2,3,4,5,6],
-38:[1,3,4,5,6],
-39:[1,2,3,4,5,6]
-}
-
 DIR = '../pickle/positive/'
 
 def get_match(pattern, seeds):
 
+  print("now : pattern{0}".format(pattern))
+
   from mymodule import Myyaml
   path_pattern = Myyaml.load("path")["path_com"]["39"]
+  needs = Myyaml.load("path")["basic_path_com"][pattern]
 
-  print("if check {0} : {1}".format(pattern, path_pattern[int(pattern)-1]))
-
-  needs = path_com[int(pattern)]
+  print("needs:{0}".format(needs))
 
   target_list = []
   target_seeds = {}
@@ -64,7 +23,7 @@ def get_match(pattern, seeds):
     print("graph {0}".format(seed))
     f = True
     for need in needs:
-      if os.path.isfile(DIR + seed + '_' + str(need) + '.pickle') == False:
+      if os.path.isfile(DIR + seed + '_' + need + '.pickle') == False:
           f = False
           break
 
@@ -72,7 +31,7 @@ def get_match(pattern, seeds):
       print("all pickle")
       match_list = []
       for need in needs:
-        su = Mypickle.load(DIR, seed + '_' +str(need))
+        su = Mypickle.load(DIR, seed + '_' +need)
         match_list = list(set(match_list) | set(su))
 
     else:
@@ -183,16 +142,16 @@ def get_match(pattern, seeds):
         match_list = basic_pass35(seed)
         match_seeds = join_dic([match_seeds])
 
-      elif pattern is path_pattern[35]:#36
+      elif pattern == path_pattern[35]:#36
         match_list = basic_pass36(seed)
 
-      elif pattern is path_pattern[36]:#37
+      elif pattern == path_pattern[36]:#37
         match_list = basic_pass37(seed)
 
-      elif pattern is path_pattern[37]:#38
+      elif pattern == path_pattern[37]:#38
         match_list = basic_pass38(seed)
 
-      elif pattern is path_pattern[38]:#39
+      elif pattern == path_pattern[38]:#39
         match_list = basic_pass39(seed)
 
       else:
@@ -224,12 +183,12 @@ def up(goal, userID):
   if goal == 'friends_only':
     if flag == 'followers_only':
       friends = use_API(userID, 'friends')
-      if friends is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'all\' )')
+      if friends is not None: database.select('UPDATE checked_list SET state = \'all\' WHERE userID = \'{0}\''.format(userID))
     elif flag == '***':
       friends = use_API(userID, 'friends')
-      if friends is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'friends_only\' )')
+      if friends is not None: database.select('UPDATE checked_list SET state = \'friends_only\' WHERE userID = \'{0}\''.format(userID))
     elif flag == 'friends_only' or flag == 'all':
-      friends = database.select('select followerID from follow_graph where userID = \'' + userID + '\'')
+      friends = database.select('SELECT followerID FROM follow_graph WHERE userID = \'{0}\''.format(userID))
       friends = tuple2list(friends)
 
     if friends is None: return []
@@ -238,12 +197,12 @@ def up(goal, userID):
   else:
     if flag == 'friends_only':
       followers = use_API(userID, 'followers')
-      if followers is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'all\' )')
+      if followers is not None: database.select('UPDATE checked_list SET state = \'all\' WHERE userID = \'{0}\''.format(userID))
     elif flag == '***':
       followers = use_API(userID, 'followers')
-      if followers is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'followers_only\' )')
+      if followers is not None: database.select('UPDATE checked_list SET state = \'followers_only\' WHERE userID = \'{0}\''.format(userID))
     elif flag == 'followers_only' or flag == 'all':
-      followers = database.select('select userID from follow_graph where followerID = \'' + userID + '\'')
+      followers = database.select('SELECT userID FROM follow_graph WHERE followerID = \'{0}\''.format(userID))
       followers = tuple2list(followers)
 
     if followers is None: return []
@@ -260,11 +219,11 @@ def update(goal, userID, seed):
       if os.path.isfile(DIR + seed + '_1' + '.pickle'):
           friends = Mypickle.load(DIR, seed + '_1')
       else:
-          up('friends_only', userID)
+          friends = up('friends_only', userID)
       if os.path.isfile(DIR + seed + '_2' + '.pickle'):
           followers = Mypickle.load(DIR, seed + '_2')
       else:
-          up('followers_only', userID)
+          followers = up('followers_only', userID)
       return friends, followers
     elif goal == 'friends_only':
       if os.path.isfile(DIR + seed + '_1' + '.pickle'): return Mypickle.load(DIR, seed + '_1')
@@ -276,23 +235,23 @@ def update(goal, userID, seed):
   if goal == 'all':
     if flag == '***':
       friends = use_API(userID, 'friends')
-      if friends is not None: database.update("checked_list", ('friends_only', userID))
+      if friends is not None: database.select('UPDATE checked_list SET state = \'friends_only\' WHERE userID = \'{0}\''.format(userID))
       followers = use_API(userID, 'followers')
-      if followers is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'all\' )')
+      if followers is not None: database.select('UPDATE checked_list SET state = \'all\' WHERE userID = \'{0}\''.format(userID))
     elif flag == 'followers_only':
       friends = use_API(userID, 'friends')
-      followers = database.select('select userID from follow_graph where followerID = \'' + userID + '\'')
+      followers = database.select('SELECT userID FROM follow_graph WHERE followerID = \'{0}\''.format(userID))
       followers = tuple2list(followers)
-      if followers is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'all\' )')
+      if friends is not None: database.select('UPDATE checked_list SET state = \'all\' WHERE userID = \'{0}\''.format(userID))
     elif flag == 'friends_only':
       followers == use_API(userID, 'followers')
-      friends = database.select('select followerID from follow_graph where userID = \'' + userID + '\'')
+      friends = database.select('SELECT followerID FROM follow_graph WHERE userID = \'{0}\''.format(userID))
       friends = tuple2list(friends)
-      if friends is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'all\' )')
+      if followers is not None: database.select('UPDATE checked_list SET state = \'all\' WHERE userID = \'{0}\''.format(userID))
     elif flag == "all":
-      friends = database.select('select followerID from follow_graph where userID = \'' + userID + '\'')
+      friends = database.select('SELECT followerID FROM follow_graph WHERE userID = \'{0}\''.format(userID))
       friends = tuple2list(friends)
-      followers = database.select('select userID from follow_graph where followerID = \'' + userID + '\'')
+      followers = database.select('SELECT userID FROM follow_graph WHERE followerID = \'{0}\''.format(userID))
       followers = tuple2list(followers)
 
     if friends is None or followers is None: return [], []
@@ -301,12 +260,13 @@ def update(goal, userID, seed):
   elif goal == 'friends_only':
     if flag == 'followers_only':
       friends = use_API(userID, 'friends')
-      if friends is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'all\' )')
+      if friends is not None: database.select('UPDATE checked_list SET state = \'all\' WHERE userID = \'{0}\''.format(userID))
     elif flag == '***':
       friends = use_API(userID, 'friends')
-      if friends is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'friends_only\' )')
+      if friends is not None: database.select('UPDATE checked_list SET state = \'friends_only\' WHERE userID = \'{0}\''.format(userID))
     elif flag == 'friends_only' or flag == 'all':
-      friends = database.select('select followerID from follow_graph where userID = \'' + userID + '\'')
+      friends = use_API(userID, 'friends')
+      friends = database.select('SELECT followerID FROM follow_graph WHERE userID = \'{0}\''.format(userID))
       friends = tuple2list(friends)
 
     if friends is None: return []
@@ -315,35 +275,84 @@ def update(goal, userID, seed):
   elif goal == 'followers_only':
     if flag == 'friends_only':
       followers = use_API(userID, 'followers')
-      if followers is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'all\' )')
+      if followers is not None: database.select('UPDATE checked_list SET state = \'all\' WHERE userID = \'{0}\''.format(userID))
     elif flag == '***':
       followers = use_API(userID, 'followers')
-      if followers is not None: database.select('INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'followers_only\' )')
+      if followers is not None: database.select('UPDATE checked_list SET state = \'followers_only\' WHERE userID = \'{0}\''.format(userID))
     elif flag == 'followers_only' or flag == 'all':
-      followers = database.select('select userID from follow_graph where followerID = \'' + userID + '\'')
+      followers = database.select('SELECT userID FROM follow_graph WHERE followerID = \'{0}\''.format(userID))
       followers = tuple2list(followers)
 
     if followers is None: return []
     return followers
 
+def check_lang(userID):
+
+    language = database.select("SELECT language FROM checked_list WHERE userID = \'{0}\'".format(userID))
+    if len(language) == 0:
+        responce = twitter.show(userID)
+        if responce.status_code != 200:
+            if responce.status_code == 401:
+                sql = 'INSERT INTO checked_list (userID, state) VALUES (\'{0}\', \'protected \')'.format(userID)
+                database.select(sql)
+            elif responce.status_code == 404:
+                sql = 'INSERT INTO checked_list (userID, state) VALUES (\'{0}\', \'NotFound \')'.format(userID)
+                database.select(sql)
+            return False
+        else:
+            ress = json.loads(responce.text)
+            language = ress["lang"]
+            followers_count = ress["followers_count"]
+            friends_count = ress["friends_count"]
+            sql = 'INSERT INTO checked_list VALUES (\'{0}\',\'***\',\'{1}\',\'{2}\',\'{3} \')'.format(userID,language,str(friends_count),str(followers_count))
+            database.select(sql)
+    else: language = language[0][0]
+
+    if language == 'ja': return True
+    else: return False
+
 
 def use_API(userID, api):
 
-  values = ""
+  values = []
+  if not check_lang(userID): return None
+  print("{0} using {1} API".format(userID,api))
+
+  return_list = acsessAPI(userID, api)
+  if return_list is None: return None
+  if len(return_list) == 0: return []
+
   if api == 'friends':
-    return_list = acsessAPI(userID, 'friends')
-    if return_list is None: return None
-    for friend in return_list:
-      values += "( \'" + userID + "\', \'" +  friend + "\'),"
-    database.select("insert ignore into follow_graph " + values[:-1]  )
+    inserted = database.select('SELECT followerID FROM follow_graph WHERE userID = \'{0}\''.format(userID))
+    inserted = tuple2list(inserted)
+    for i, friend in enumerate(return_list):
+      if friend in inserted: continue
+      sql = 'INSERT IGNORE INTO follow_graph VALUES (\'{0}\',\'{1}\')'.format(userID,friend)
+      database.select(sql)
+      #values.append("(\'{0}\',\'{1}\')".format(userID,friend))
+      #if i % 1000 == 0:
+          #sq =','.join(values)
+          #database.select("INSERT IGNORE INTO follow_graph VALUES " + sq  )
+          #values = []
+    #sq =','.join(values)
+    #database.select("INSERT IGNORE INTO follow_graph VALUES " + sq )
 
   else:
-    return_list = acsessAPI(userID, 'followers')
-    if return_list is None: return None
-    for follower in return_list:
-      values += "( \'" + follower + "\', \'" +  userID + "\'),"
-    database.select("insert ignore into follow_graph " + values[-1] )
+    inserted = database.select('SELECT userID FROM follow_graph WHERE followerID = \'{0}\''.format(userID))
+    inserted = tuple2list(inserted)
+    for i,follower in enumerate(return_list):
+      if follower in inserted: continue
+      sql = 'INSERT IGNORE INTO follow_graph VALUES (\'{0}\',\'{1}\')'.format(follower,userID)
+      database.select(sql)
+      #values.append("(\'{0}\', \'{1}\')".format(follower,userID))
+      #if i % 1000 == 0:
+          #sq =','.join(values)
+          #database.select("insert into follow_graph values " + sq )
+          #values = []
+  #sq =','.join(values)
+  #database.select("insert into follow_graph values " + sq )'''
 
+  #print("get use length : {0}".format(len(return_list)))
   return return_list
 
 
@@ -355,13 +364,6 @@ def acsessAPI(userID, api):
     else:responce = twitter.friends(userID)
 
     if responce.status_code != 200:
-      print("{0} : Error code: {1}".format(userID, responce.status_code))
-      if responce.status_code == 401:
-        sql = 'INSERT into checked_list (userID, state) values (\'' + userID  + '\', \'protected \' )'
-        database.select(sql)
-      elif responce.status_code == 404:
-        sql = 'INSERT into checked_list (userID, state) values (\'' + userID + '\', \'NotFound\' )'
-        database.select(sql)
       return None
 
     IDs = json.loads(responce.text)
@@ -452,7 +454,7 @@ def basic_pass6(seed):
   if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
 
   for follower in followers:
-    followers = update("followers_only",follower,seed)
+    followers2 = update("followers_only",follower,seed)
     match_list = list(set(match_list) | set(followers_2))
 
 
@@ -536,7 +538,7 @@ def basic_pass11(seed):
   if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
 
   mutual = list(set(followers) & set(friends))
-  mutual = list(set(mutual) - set(seeds))
+  mutual = list(set(mutual) - set(seed))
 
   for m in mutual: ans = update("followers_only", m,seed)
 
@@ -589,7 +591,7 @@ def basic_pass14(seed):
   if not os.path.isfile(DIR + seed + '_2.pickle'):  Mypickle.save(DIR, followers, seed + '_2')
 
   mutual = list(set(followers) & set(friends))
-  mutual = list(set(mutual) - set(seeds))
+  mutual = list(set(mutual) - set(seed))
 
   for m in mutual: ans = update("friends_only", m,seed)
 
@@ -775,7 +777,7 @@ def basic_pass24(seed):
 
     ans = list(set(mutual2friends) & set(mutual2followers))
 
-  match_list = list(set(match_list) | set(ans))
+    match_list = list(set(match_list) | set(ans))
 
   return match_list
 
@@ -836,11 +838,11 @@ def basic_pass27(seed):
 
     ans = list(set(mutual2followers) & set(followers))
 
-  match_list = list(set(match_list) | set(ans))
+    match_list = list(set(match_list) | set(ans))
 
   return match_list
 
-def basic_pass28(seeds):
+def basic_pass28(seed):
 
   match_list = []
 
@@ -856,7 +858,7 @@ def basic_pass28(seeds):
 
     ans = list(set(mutual2followers) & set(friends))
 
-  match_list = list(set(match_list) | set(ans))
+    match_list = list(set(match_list) | set(ans))
 
   return match_list
 
@@ -876,7 +878,7 @@ def basic_pass29(seed):
 
     ans = list(set(mutual2friends) & set(followers))
 
-  match_list = list(set(match_list) | set(ans))
+    match_list = list(set(match_list) | set(ans))
 
   return match_list
 
@@ -896,7 +898,7 @@ def basic_pass30(seed):
 
       ans = list(set(mutual2friends) & set(friends))
 
-  match_list = list(set(match_list) | set(ans))
+      match_list = list(set(match_list) | set(ans))
 
   return match_list
 
@@ -978,7 +980,7 @@ def basic_pass34(seed):
 
     ans = list(set(mutual2followers) & set(mutual))
 
-  match_list = list(set(match_list) | set(ans))
+    match_list = list(set(match_list) | set(ans))
 
   return match_list
 
@@ -998,7 +1000,7 @@ def basic_pass35(seed):
 
     ans = list(set(mutual2friends) & set(mutual))
 
-  match_list = list(set(match_list) | set(ans))
+    match_list = list(set(match_list) | set(ans))
 
   return match_list
 
@@ -1038,7 +1040,7 @@ def basic_pass37(seed):
 
     ans = list(set(mutual2friends) & set(mutual2followers) & set(followers))
 
-  match_list = list(set(match_list) | set(ans))
+    match_list = list(set(match_list) | set(ans))
 
   return match_list
 
@@ -1058,7 +1060,7 @@ def basic_pass38(seed):
 
       ans = list(set(mutual2friends) & set(mutual2followers) & set(friends))
 
-    match_list = list(set(match_list) | set(ans))
+      match_list = list(set(match_list) | set(ans))
 
     return match_list
 
@@ -1078,7 +1080,7 @@ def basic_pass39(seed):
 
     ans = list(set(mutual2friends) & set(mutual2followers) & set(mutual))
 
-  match_list = list(set(match_list) | set(ans))
+    match_list = list(set(match_list) | set(ans))
 
   return match_list
 
@@ -1092,4 +1094,4 @@ def join_dic(dics):
   for k, v in ans.items():
     ans[k] = list(set(v))
 
-  return ans
+  return {k:list(set(v)) for k,v in ans.items()}

@@ -9,11 +9,11 @@ from . import prepare
 def check(userID):
 
     conn = prepare.init()
-    
+
     c = conn.cursor()
     sql = "SELECT state from checked_list where userID = " + userID
     c.execute(sql)
-    
+
     result = c.fetchall()
     c.close()
 
@@ -71,6 +71,7 @@ def insert(database, values):
 
 def register_api():
     import os
+    import yaml
     MAX = select("select MAX(id) from api_limit")[0][0]
     keys = os.listdir('../password/twitterAPI/')
 

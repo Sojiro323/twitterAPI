@@ -4,7 +4,6 @@ import os
 import sys
 
 def load(path, files):
-    print("\nload pickle...")
 
     if path[-1] != "/":path = path + "/"
     #names = {id(v):k for k,v in currentframe().f_back.f_locals.items()}
@@ -12,6 +11,7 @@ def load(path, files):
 
     if isinstance(files, str):
         name = path + files + ".pickle"
+        print("\nload {0}.pickle".format(files))
         if not os.path.exists(name):
             print('not found directry or file:{0}'.format(name))
             sys.exit()
@@ -21,6 +21,7 @@ def load(path, files):
 
     return_files = []
 
+    print("load pickles {0}".format(files))
     for f in files:
         name = path + f + ".pickle"
         if not os.path.exists(name):

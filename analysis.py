@@ -107,6 +107,7 @@ if __name__ == "__main__":
   nodeofflags = {}
 
   path = "../query/analysis/"
+  pickle_path = "../pickle/positive/"
   doc_name = queryID + "_node2node"
   if os.path.exists(path + doc_name + ".pickle"): node2node = Mypickle.load(path, doc_name)
   print(len(node2node))
@@ -124,7 +125,7 @@ if __name__ == "__main__":
     print("\nuser : {0} start".format(user))
 
     if nodeofflags[user][0] and nodeofflags[user][1]:
-      friends, followers = graph.update("all", user)
+      friends, followers = graph.update("all", user, user)
       node2node[user]["friend"] = friends
       node2node[user]["follower"] = followers
       nodeofflags[user][0] = False
@@ -149,7 +150,7 @@ if __name__ == "__main__":
     node2node[user]["friend2follower"] = []
 
     for friend in friends:
-      friend2friend, friend2follower = graph.update("all", friend)
+      friend2friend, friend2follower = graph.update("all", friend, user)
       ans_friend = list((set(friend2friend) & set(seeds + match)) - set([user]))
       ans_follower = list((set(friend2follower) & set(seeds + match)) - set([user]))
       for i in ans_friend: node2node[user]["friend2friend"].append([friend, i])
@@ -174,7 +175,7 @@ if __name__ == "__main__":
     node2node[user]["follower2follower"] = []
 
     for follower in followers:
-      follower2friend, follower2follower = graph.update("all", follower)
+      follower2friend, follower2follower = graph.update("all", follower, user)
       ans_friend = list((set(follower2friend) & set(seeds + match)) - set([user]))
       ans_follower = list((set(follower2follower) & set(seeds + match)) - set([user]))
       for i in ans_friend: node2node[user]["follower2friend"].append([follower, i])

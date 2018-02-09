@@ -3,6 +3,8 @@ from mymodule import Mypickle
 from connect import database
 from connect import twitter
 from operator import itemgetter
+from mymodule import Myyaml
+import numpy as np
 import itertools
 import random
 import json
@@ -13,57 +15,48 @@ import sys
 
 '''global variable'''
 path = "../query/"
-start_score = 0.6
-query_ID = "3"
-seeds = ['125056081','2294473200','761272495']
-
-path_pattern = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24",
-"25","26","27","28","29","30","31","32","33","34","35","36","37","38","39"]
+path_pattern = Myyaml.load("path")["path_com"]["39"]
 
 
 
-#seeds = ["2294473200","761272495"]
-get_num = 30
 
-
-def recommendation(d_flag, pattern, seeds, seeds_score):
+def recommendation(parameter,queryID, d_flag, pattern, seeds, seeds_score):
   if d_flag: import graph
   else: import graph_old as graph
 
   print("pattern : {0} \n seeds : {1}".format(pattern, seeds))
-  if d_flag: match_list, match_seeds = graph.get_match("1", seeds)
-  else: match_list, match_seeds = graph_old.get_match(pattern, seeds)
+  match_list, match_seeds = graph.get_match(pattern, seeds)
   print('match_list_lengh : {0}'.format(len(match_list)))
 
 
   if len(match_list) == 0: next_pattern = random.choice(path_pattern)
   else:
-    match_list = ranking(pattern, match_list, match_seeds, seeds_score)
-    match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
+    af_match_list = ranking(parameter,pattern, match_list, match_seeds, seeds_score)
+    match_users, next_pattern, seeds_score = personal_check(queryID, pattern, af_match_list, match_seeds ,seeds_score)
 
-    print("patern next_pattern : {0} {1}".format(pattern, next_pattern))
+    print("patern next_pattern (seeds:{0}): {1} {2}".format(len(seeds), pattern, next_pattern))
     while(pattern == next_pattern):
       add_match_list, add_match_seeds = graph.get_match(pattern, match_users)
       match_seeds = graph.join_dic([match_seeds, add_match_seeds])
-      match_list = list(set(match_list) & set(add_match_list))
-      match_list = ranking(pattern, match_list, match_seeds, seeds_score)
-      print('match_list_lengh : {0}'.format(len(match_list)))
-      match_users, next_pattern, seeds_score = personal_check(pattern, match_list, match_seeds ,seeds_score)
+      match_list = list(set(match_list) | set(add_match_list))
+      af_match_list = ranking(parameter,pattern, match_list, match_seeds, seeds_score)
+      print('all:match_list : {0}'.format(len(match_list)))
+      match_users, next_pattern, seeds_score = personal_check(queryID, pattern, af_match_list, match_seeds ,seeds_score)
       print("now seeds : {0}".format(seeds))
       seeds = seeds + match_users
 
   return next_pattern, seeds, seeds_score
 
 
-def ranking(pattern, match_list, match_seeds, seeds_score):
+def ranking(parameter,pattern, match_list, match_seeds, seeds_score):
 
-  import numpy as np
   seeds = seeds_score.keys()
   path_score = {}
   ranking_list = []
   count = 0
-  parameter = 0.5
-  take = 300
+  take =300
+  if len(match_list) < take: take = len(match_list) -5
+
 
   for k,v in seeds_score.items():
     path_score[k] = v[pattern][0]
@@ -91,23 +84,23 @@ def ranking(pattern, match_list, match_seeds, seeds_score):
 
 
 
-def personal_check(pattern, match_list, match_seeds ,seeds_score):
+def personal_check(queryID, pattern, match_list, match_seeds ,seeds_score):
 
   match_users = []
 
   for user in match_list:
 
-    if len(database.select('SELECT * from query where userID = \'' + user[0] + '\' AND queryID = \'' + query_ID + '\'')) != 0: continue
+    if len(database.select('SELECT * from query where userID = \'' + user[0] + '\' AND queryID = \'' + queryID + '\'')) != 0: continue
 
     responce = twitter.show(user[0])
     if responce.status_code != 200:
       print("Error code: %d" %(responce.status_code))
-      sys.exit()
+      continue
 
     ress = json.loads(responce.text)
     print("score : {0}".format(user[1]))
-    print("https://twitter.com/intent/user?user_id=" + user[0])
-    print("\nuserID:{0}\nusername:{1}\nprofile:{2}\n".format(user[0],ress["name"],ress["description"]))
+    print("\n\nhttps://twitter.com/intent/user?user_id=" + user[0])
+    print("screen_name:{0}\nuserID:{1}\nusername:{2}\nprofile:{3}\n".format(ress["screen_name"],user[0],ress["name"],ress["description"]))
 
     webbrowser_flag = False
     while(1):
@@ -126,16 +119,16 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
 
 
       if input_flag == "true":
-        ID = database.select("SELECT MAX(ID) from query where queryID = \'" + query_ID + "\'")
-        database.insert("query", (str(int(ID[0][0]) + 1), user[0], query_ID, "2"))
+        ID = database.select("SELECT MAX(ID) from query where queryID = \'" + queryID + "\'")
+        database.insert("query", (str(int(ID[0][0]) + 1), user[0], queryID, "2"))
         break
       elif input_flag == "false":
-        ID = database.select("SELECT MAX(ID) from query where queryID = \'" + query_ID + "\'")
-        database.insert("query", (str(int(ID[0][0]) + 1), user[0], query_ID, "0"))
+        ID = database.select("SELECT MAX(ID) from query where queryID = \'" + queryID + "\'")
+        database.insert("query", (str(int(ID[0][0]) + 1), user[0], queryID, "0"))
         break
       elif input_flag == "half":
-        ID = database.select("SELECT MAX(ID) from query where queryID = \'" + query_ID + "\'")
-        Mydatavase.insert("query", (str(int(ID[0][0]) + 1), user[0], query_ID, "1"))
+        ID = database.select("SELECT MAX(ID) from query where queryID = \'" + queryID + "\'")
+        Mydatavase.insert("query", (str(int(ID[0][0]) + 1), user[0], queryID, "1"))
         break
       else: print("input again!!")
 
@@ -148,7 +141,7 @@ def personal_check(pattern, match_list, match_seeds ,seeds_score):
     else:
       seeds_score = update_score(input_flag, pattern, seeds, seeds_score)
 
-    Mypickle.save(path, seeds_score, "seeds_score_" + query_ID)
+    Mypickle.save(path, seeds_score, "seeds_score_" + queryID)
 
     continue_flag, next_pattern = passcheck_continue(pattern, seeds_score)
     if continue_flag is True or (continue_flag is False and input_flag == "true"): break
